@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:ui' as ui;
 
 void main() {
   runApp(const MyApp());
@@ -19,75 +20,16 @@ class MyApp extends StatelessWidget {
         appBar: AppBar(
           title: const Text('Flutter Demo'),
         ),
-        body: Container(
-          width: 640,
-          height: 480,
-          padding: const EdgeInsets.all(8),
-          margin: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            // color: Colors.blue,
-            border: Border.all(color: Colors.red, width: 2),
-            borderRadius: BorderRadius.circular(8),
-            image: const DecorationImage(
-              image: NetworkImage('https://placehold.jp/640x480.png'),
-              fit: BoxFit.fill,
-            ),
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              const Text('first line'),
-              const Text('second line'),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  TextButton(
-                    onPressed: () {},
-                    style: TextButton.styleFrom(
-                      primary: Colors.red,
-                    ),
-                    child: const Text('click here'),
-                  ),
-                  OutlinedButton(
-                    onPressed: () {},
-                    style: OutlinedButton.styleFrom(
-                      primary: Colors.red,
-                    ),
-                    child: const Text('click here'),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {/* ボタンがタップされた時の処理 */},
-                    style: ElevatedButton.styleFrom(
-                      primary: Colors.red,
-                      elevation: 10,
-                    ),
-                    child: const Text('click here'),
-                  ),
-                ],
-              ),
-              Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    TextButton.icon(
-                      onPressed: () {},
-                      icon: const Icon(Icons.thumb_up),
-                      label: const Text('Good'),
-                    ),
-                    OutlinedButton.icon(
-                      onPressed: () {},
-                      icon: const Icon(Icons.favorite),
-                      label: const Text('Like'),
-                    ),
-                    ElevatedButton.icon(
-                      onPressed: () {},
-                      icon: const Icon(Icons.flight),
-                      label: const Text('Flight'),
-                    )
-                  ]),
-            ],
+        body: SizedBox(
+          width: double.infinity,
+          height: double.infinity,
+          child: FutureBuilder(
+            future: getPattern(),
+            builder: (BuildContext context, AsyncSnapshot<ui.Image> snapshot) {
+              return CustomPaint(
+                painter: _SamplePainter(snapshot.data),
+              );
+            },
           ),
         ),
         floatingActionButton: FloatingActionButton(
@@ -97,5 +39,65 @@ class MyApp extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+Future<ui.Image> getPattern() async {
+  var pictureRecorder = ui.PictureRecorder();
+  Canvas patternCanvas = Canvas(pictureRecorder);
+
+  //市松模様のパターン
+  List<Offset> points = const [
+    Offset(0, 0),
+    Offset(1, 1),
+  ];
+
+  //オフセットの微調整
+  points = points.map((e) => e + const Offset(1, 0)).toList();
+
+  final patternPaint = Paint()
+    ..color = Colors.black
+    ..strokeWidth = 1
+    ..style = PaintingStyle.stroke
+    ..strokeJoin = StrokeJoin.round
+    ..isAntiAlias = false;
+
+  patternCanvas.drawPoints(ui.PointMode.points, points, patternPaint);
+  final aPatternPicture = pictureRecorder.endRecording();
+
+  return aPatternPicture.toImage(2, 2);
+}
+
+// https://stackoverflow.com/questions/70866283/custompainter-drawimage-throws-an-exception-object-has-been-disposed
+// https://stackoverflow.com/questions/52752298/how-to-draw-different-pattern-in-flutter
+class _SamplePainter extends CustomPainter {
+  final ui.Image? aPattern;
+
+  _SamplePainter(this.aPattern);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    if (aPattern != null) {
+      final paint = Paint()
+        ..color = Colors.blue
+        ..strokeCap = StrokeCap.round
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 10
+        ..isAntiAlias = false
+        ..shader = ImageShader(aPattern!, TileMode.repeated, TileMode.repeated,
+            Matrix4.identity().storage);
+
+      var path = Path();
+      path.moveTo(size.width / 2, size.height / 5);
+      path.lineTo(size.width / 4, size.height / 5 * 4);
+      path.lineTo(size.width / 4 * 3, size.height / 5 * 4);
+      path.close();
+      canvas.drawPath(path, paint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(_SamplePainter oldDelegate) {
+    return aPattern != oldDelegate.aPattern;
   }
 }
