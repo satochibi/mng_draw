@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
       ),
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('Flutter Demo'),
+          title: const Text('PictureRecorder Test'),
         ),
         body: SizedBox(
           width: double.infinity,
@@ -31,11 +31,6 @@ class MyApp extends StatelessWidget {
             },
           ),
         ),
-        floatingActionButton: FloatingActionButton(
-          backgroundColor: Colors.green,
-          onPressed: () {},
-          child: const Icon(Icons.add),
-        ),
       ),
     );
   }
@@ -45,24 +40,33 @@ Future<ui.Image> getPattern() async {
   var pictureRecorder = ui.PictureRecorder();
   Canvas patternCanvas = Canvas(pictureRecorder);
 
-  // Definition of checkered pattern
-  List<Offset> points = const [
-    //Depending on the environment, the Offset(0, 0) point of the pattern is not displayed.
-    Offset(0, 0),
-    Offset(1, 1),
+  const colorList = [
+    Colors.black,
+    Color(0xffff7f7f),
+    Color(0xffff7fff),
+    Color(0xff7f7fff),
+    Color(0xff7fbfff),
+    Color(0xff7fffff),
+    Color(0xff7fff7f),
+    Color(0xffffff7f),
+    Color(0xffffbf7f)
   ];
 
-  final patternPaint = Paint()
-    ..color = Colors.black
-    ..strokeWidth = 1
-    ..style = PaintingStyle.stroke
-    ..strokeJoin = StrokeJoin.round
-    ..isAntiAlias = false;
+  final paintList = colorList
+      .map((e) => Paint()
+        ..color = e
+        ..strokeWidth = 1
+        ..style = PaintingStyle.stroke
+        ..strokeJoin = StrokeJoin.round
+        ..isAntiAlias = false)
+      .toList();
 
-  patternCanvas.drawPoints(ui.PointMode.points, points, patternPaint);
+  paintList.asMap().forEach((index, element) => patternCanvas.drawPoints(
+      ui.PointMode.points, [Offset(index % 3, index / 3)], paintList[index]));
+
   final aPatternPicture = pictureRecorder.endRecording();
 
-  return aPatternPicture.toImage(2, 2);
+  return aPatternPicture.toImage(3, 3);
 }
 
 // https://stackoverflow.com/questions/70866283/custompainter-drawimage-throws-an-exception-object-has-been-disposed
@@ -76,7 +80,6 @@ class _SamplePainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     if (aPattern != null) {
       final paint = Paint()
-        ..color = Colors.blue
         ..strokeCap = StrokeCap.round
         ..style = PaintingStyle.stroke
         ..strokeWidth = 10
@@ -93,7 +96,8 @@ class _SamplePainter extends CustomPainter {
       canvas.drawPath(path, paint);
 
       //Depending on the environment, the Offset(0, 0) point of the pattern is not displayed.
-      canvas.drawImage(aPattern!, const Offset(50, 50), Paint());
+      canvas.drawImage(
+          aPattern!, Offset(size.width / 2, size.height / 2), Paint());
     }
   }
 
