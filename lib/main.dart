@@ -5,7 +5,6 @@ void main() {
   runApp(const MyApp());
 }
 
-// https://www.flutter-study.dev/widgets/button-widget
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
@@ -46,14 +45,12 @@ Future<ui.Image> getPattern() async {
   var pictureRecorder = ui.PictureRecorder();
   Canvas patternCanvas = Canvas(pictureRecorder);
 
-  //市松模様のパターン
+  // Definition of checkered pattern
   List<Offset> points = const [
+    //Depending on the environment, the Offset(0, 0) point of the pattern is not displayed.
     Offset(0, 0),
     Offset(1, 1),
   ];
-
-  //オフセットの微調整
-  points = points.map((e) => e + const Offset(1, 0)).toList();
 
   final patternPaint = Paint()
     ..color = Colors.black
@@ -92,7 +89,11 @@ class _SamplePainter extends CustomPainter {
       path.lineTo(size.width / 4, size.height / 5 * 4);
       path.lineTo(size.width / 4 * 3, size.height / 5 * 4);
       path.close();
+
       canvas.drawPath(path, paint);
+
+      //Depending on the environment, the Offset(0, 0) point of the pattern is not displayed.
+      canvas.drawImage(aPattern!, const Offset(50, 50), Paint());
     }
   }
 
