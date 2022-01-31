@@ -25,8 +25,11 @@ class MyApp extends StatelessWidget {
           child: FutureBuilder(
             future: getPattern(),
             builder: (BuildContext context, AsyncSnapshot<ui.Image> snapshot) {
-              return CustomPaint(
-                painter: _SamplePainter(snapshot.data),
+              return FakeDevicePixelRatio(
+                fakeDevicePixelRatio: 1.0,
+                child: CustomPaint(
+                  painter: _SamplePainter(snapshot.data),
+                ),
               );
             },
           ),
@@ -104,5 +107,27 @@ class _SamplePainter extends CustomPainter {
   @override
   bool shouldRepaint(_SamplePainter oldDelegate) {
     return aPattern != oldDelegate.aPattern;
+  }
+}
+
+class FakeDevicePixelRatio extends StatelessWidget {
+  final num fakeDevicePixelRatio;
+  final Widget child;
+
+  const FakeDevicePixelRatio(
+      {Key? key, required this.fakeDevicePixelRatio, required this.child})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final devicePixelRatio =
+        WidgetsBinding.instance?.window.devicePixelRatio ?? 1;
+
+    final ratio = fakeDevicePixelRatio / devicePixelRatio;
+
+    return FractionallySizedBox(
+        widthFactor: 1 / ratio,
+        heightFactor: 1 / ratio,
+        child: Transform.scale(scale: ratio, child: child));
   }
 }
