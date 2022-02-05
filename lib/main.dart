@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:ui' as ui;
+import 'package:mng_draw/paint_patterns.dart' as patterns;
+import 'package:mng_draw/paint_colors.dart' as colors;
 
 void main() {
   runApp(const MyApp());
@@ -40,29 +42,22 @@ class MyApp extends StatelessWidget {
 }
 
 Future<ui.Image> getPattern() async {
-  var pictureRecorder = ui.PictureRecorder();
-  Canvas patternCanvas = Canvas(pictureRecorder);
+  var aPattern = patterns.checkered();
+  var aColor = colors.blue();
 
-  const colorList = [
-    Colors.black,
-    Color(0xffff7f7f),
-    Color(0xffff7fff),
-    Color(0xff7f7fff),
-    Color(0xff7fbfff),
-    Color(0xff7fffff),
-    Color(0xff7fff7f),
-    Color(0xffffff7f),
-    Color(0xffffbf7f)
-  ];
+  var aPatternPosition = aPattern["data"] as List<Offset>;
+  var width = aPattern["width"] as int;
+  var height = aPattern["height"] as int;
 
-  final paintList = colorList
-      .map((e) => Paint()
-        ..color = e
-        ..strokeWidth = 1
-        ..style = PaintingStyle.stroke
-        ..strokeJoin = StrokeJoin.round
-        ..isAntiAlias = false)
-      .toList();
+  var aNextPatternPosition =
+      aPatternPosition.map((e) => e + Offset(width.toDouble(), 0)).toList();
+
+  var aPaint = Paint()
+    ..color = aColor
+    ..strokeWidth = 1
+    ..style = PaintingStyle.stroke
+    ..strokeJoin = StrokeJoin.round
+    ..isAntiAlias = false;
 
   // FlutterのPictureRecorderのバグのため、
   // パターンイメージを1x1タイルではなく、2x1タイルで描画
@@ -70,17 +65,17 @@ Future<ui.Image> getPattern() async {
   // PictureRecorderのバグ
   // 環境によって原点が(0,0)ではなく、(1,0)になるバグ
 
-  paintList.asMap().forEach((index, element) => patternCanvas.drawPoints(
-      ui.PointMode.points, [Offset(index % 3, index / 3)], paintList[index]));
+  var pictureRecorder = ui.PictureRecorder();
+  Canvas patternCanvas = Canvas(pictureRecorder);
 
-  paintList.asMap().forEach((index, element) => patternCanvas.drawPoints(
-      ui.PointMode.points,
-      [Offset(index % 3 + 3, index / 3)],
-      paintList[index]));
+  patternCanvas.drawRect(const Rect.fromLTWH(0, 0, 100, 100),
+      Paint()..color = colors.transparent());
+
+  patternCanvas.drawPoints(ui.PointMode.points, aPatternPosition, aPaint);
+  patternCanvas.drawPoints(ui.PointMode.points, aNextPatternPosition, aPaint);
 
   final aPatternPicture = pictureRecorder.endRecording();
-
-  return aPatternPicture.toImage(3, 3);
+  return aPatternPicture.toImage(width, height);
 }
 
 // https://stackoverflow.com/questions/70866283/custompainter-drawimage-throws-an-exception-object-has-been-disposed
@@ -110,8 +105,8 @@ class _SamplePainter extends CustomPainter {
       canvas.drawPath(path, paint);
 
       //Depending on the environment, the Offset(0, 0) point of the pattern is not displayed.
-      canvas.drawImage(
-          aPattern!, Offset(size.width / 2, size.height / 2), Paint());
+      // canvas.drawImage(
+      //     aPattern!, Offset(size.width / 2, size.height / 2), Paint());
     }
   }
 
