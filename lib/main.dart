@@ -102,6 +102,11 @@ class _SamplePainter extends CustomPainter {
       path.lineTo(size.width / 4 * 3, size.height / 5 * 4);
       path.close();
 
+      // 背景を描画
+      canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height),
+          Paint()..color = colors.artBoardBackground());
+
+      // 三角形を描画
       canvas.drawPath(path, paint);
 
       //Depending on the environment, the Offset(0, 0) point of the pattern is not displayed.
