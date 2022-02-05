@@ -64,8 +64,19 @@ Future<ui.Image> getPattern() async {
         ..isAntiAlias = false)
       .toList();
 
+  // FlutterのPictureRecorderのバグのため、
+  // パターンイメージを1x1タイルではなく、2x1タイルで描画
+  //
+  // PictureRecorderのバグ
+  // 環境によって原点が(0,0)ではなく、(1,0)になるバグ
+
   paintList.asMap().forEach((index, element) => patternCanvas.drawPoints(
       ui.PointMode.points, [Offset(index % 3, index / 3)], paintList[index]));
+
+  paintList.asMap().forEach((index, element) => patternCanvas.drawPoints(
+      ui.PointMode.points,
+      [Offset(index % 3 + 3, index / 3)],
+      paintList[index]));
 
   final aPatternPicture = pictureRecorder.endRecording();
 
