@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:ui' as ui;
-import 'package:mng_draw/paint_patterns.dart' as patterns;
 import 'package:mng_draw/paint_colors.dart' as colors;
+import 'package:mng_draw/screentone.dart';
+import 'package:mng_draw/point.dart';
 
 void main() {
   runApp(const MyApp());
@@ -42,15 +43,15 @@ class MyApp extends StatelessWidget {
 }
 
 Future<ui.Image> getPattern() async {
-  var aPattern = patterns.checkered();
+  var screentone = Screentone.stripeX().scale(2);
   var aColor = colors.blue();
 
-  var aPatternPosition = aPattern["data"] as List<Offset>;
-  var width = aPattern["width"] as int;
-  var height = aPattern["height"] as int;
+  var aPatternPosition = screentone.data;
+  var width = screentone.width;
+  var height = screentone.height;
 
   var aNextPatternPosition =
-      aPatternPosition.map((e) => e + Offset(width.toDouble(), 0)).toList();
+      aPatternPosition.map((e) => e + Point(width.toDouble(), 0)).toList();
 
   var aPaint = Paint()
     ..color = aColor
