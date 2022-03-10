@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'dart:ui' as ui;
-import 'package:mng_draw/paint_colors.dart' as colors;
-import 'package:mng_draw/screentone.dart';
-import 'package:mng_draw/point.dart';
+import 'package:mng_draw/edit_screen.dart';
+import 'package:provider/provider.dart';
+import 'package:mng_draw/pen_model.dart';
+import 'package:mng_draw/strokes_model.dart';
 
 void main() {
   runApp(const MyApp());
@@ -13,133 +13,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('PictureRecorder Test'),
-        ),
-        body: SizedBox(
-          width: double.infinity,
-          height: double.infinity,
-          child: FutureBuilder(
-            future: getPattern(),
-            builder: (BuildContext context, AsyncSnapshot<ui.Image> snapshot) {
-              return FakeDevicePixelRatio(
-                fakeDevicePixelRatio: 1.0,
-                child: CustomPaint(
-                  painter: _SamplePainter(snapshot.data),
-                ),
-              );
-            },
-          ),
-        ),
-      ),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<PenModel>(create: (_) => PenModel()),
+        ChangeNotifierProvider<StrokesModel>(create: (_) => StrokesModel())
+      ],
+      child: const MaterialApp(home: SafeArea(child: EditScreen())),
     );
-  }
-}
-
-Future<ui.Image> getPattern() async {
-  var screentone = Screentone.stripeX().scale(2);
-  var aColor = colors.blue();
-
-  var aPatternPosition = screentone.data;
-  var width = screentone.width;
-  var height = screentone.height;
-
-  var aNextPatternPosition =
-      aPatternPosition.map((e) => e + Point(width.toDouble(), 0)).toList();
-
-  var aPaint = Paint()
-    ..color = aColor
-    ..strokeWidth = 1
-    ..style = PaintingStyle.stroke
-    ..strokeJoin = StrokeJoin.round
-    ..isAntiAlias = false;
-
-  // FlutterのPictureRecorderのバグのため、
-  // パターンイメージを1x1タイルではなく、2x1タイルで描画
-  //
-  // PictureRecorderのバグ
-  // 環境によって原点が(0,0)ではなく、(1,0)になるバグ
-
-  var pictureRecorder = ui.PictureRecorder();
-  Canvas patternCanvas = Canvas(pictureRecorder);
-
-  patternCanvas.drawRect(const Rect.fromLTWH(0, 0, 100, 100),
-      Paint()..color = colors.transparent());
-
-  patternCanvas.drawPoints(ui.PointMode.points, aPatternPosition, aPaint);
-  patternCanvas.drawPoints(ui.PointMode.points, aNextPatternPosition, aPaint);
-
-  final aPatternPicture = pictureRecorder.endRecording();
-  return aPatternPicture.toImage(width, height);
-}
-
-// https://stackoverflow.com/questions/70866283/custompainter-drawimage-throws-an-exception-object-has-been-disposed
-// https://stackoverflow.com/questions/52752298/how-to-draw-different-pattern-in-flutter
-class _SamplePainter extends CustomPainter {
-  final ui.Image? aPattern;
-
-  _SamplePainter(this.aPattern);
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    if (aPattern != null) {
-      final paint = Paint()
-        ..strokeCap = StrokeCap.round
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 10
-        ..isAntiAlias = false
-        ..shader = ImageShader(aPattern!, TileMode.repeated, TileMode.repeated,
-            Matrix4.identity().storage);
-
-      var path = Path();
-      path.moveTo(size.width / 2, size.height / 5);
-      path.lineTo(size.width / 4, size.height / 5 * 4);
-      path.lineTo(size.width / 4 * 3, size.height / 5 * 4);
-      path.close();
-
-      // 背景を描画
-      canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height),
-          Paint()..color = colors.artBoardBackground());
-
-      // 三角形を描画
-      canvas.drawPath(path, paint);
-
-      //Depending on the environment, the Offset(0, 0) point of the pattern is not displayed.
-      // canvas.drawImage(
-      //     aPattern!, Offset(size.width / 2, size.height / 2), Paint());
-    }
-  }
-
-  @override
-  bool shouldRepaint(_SamplePainter oldDelegate) {
-    return aPattern != oldDelegate.aPattern;
-  }
-}
-
-class FakeDevicePixelRatio extends StatelessWidget {
-  final num fakeDevicePixelRatio;
-  final Widget child;
-
-  const FakeDevicePixelRatio(
-      {Key? key, required this.fakeDevicePixelRatio, required this.child})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    final devicePixelRatio =
-        WidgetsBinding.instance?.window.devicePixelRatio ?? 1;
-
-    final ratio = fakeDevicePixelRatio / devicePixelRatio;
-
-    return FractionallySizedBox(
-        widthFactor: 1 / ratio,
-        heightFactor: 1 / ratio,
-        child: Transform.scale(scale: ratio, child: child));
   }
 }
