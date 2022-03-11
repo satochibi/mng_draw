@@ -35,7 +35,6 @@ class ArtBoard extends StatelessWidget {
 // https://stackoverflow.com/questions/70866283/custompainter-drawimage-throws-an-exception-object-has-been-disposed
 // https://stackoverflow.com/questions/52752298/how-to-draw-different-pattern-in-flutter
 class _SamplePainter extends CustomPainter {
-  // final ui.Image? aPattern;
   final StrokesModel strokes;
 
   _SamplePainter(this.strokes);

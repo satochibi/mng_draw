@@ -3,7 +3,7 @@ import 'package:mng_draw/screentone.dart';
 import 'package:mng_draw/paint_colors.dart' as colors;
 
 class PenModel extends ChangeNotifier {
-  Color _color = colors.blue();
+  Color _color = colors.black();
   double _width = 10;
   Screentone _screentone = Screentone.dense2x2();
 
