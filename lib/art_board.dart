@@ -1,11 +1,10 @@
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
-import 'package:mng_draw/screentone.dart';
 import 'package:mng_draw/paint_colors.dart' as colors;
-import 'package:mng_draw/point.dart';
 import 'package:provider/provider.dart';
 import 'package:mng_draw/pen_model.dart';
 import 'package:mng_draw/strokes_model.dart';
+import 'package:mng_draw/fake_device_pixel_ratio_widget.dart';
 
 class ArtBoard extends StatelessWidget {
   const ArtBoard({Key? key}) : super(key: key);
@@ -16,15 +15,15 @@ class ArtBoard extends StatelessWidget {
     final strokes = Provider.of<StrokesModel>(context);
 
     return FutureBuilder(
-      future: getPattern(colors.blue(), Screentone.dense2x2()),
-      builder: (BuildContext context, AsyncSnapshot<ui.Image> snapshot) {
+      future: strokes.screentoneImage(),
+      builder: (context, snapshot) {
         return FakeDevicePixelRatio(
           fakeDevicePixelRatio: 1.0,
           child: GestureDetector(
             onPanDown: (details) => strokes.add(pen, details.localPosition),
             onPanUpdate: (details) => strokes.update(details.localPosition),
             child: CustomPaint(
-              painter: _SamplePainter(strokes, snapshot.data),
+              painter: _SamplePainter(strokes),
             ),
           ),
         );
@@ -33,48 +32,13 @@ class ArtBoard extends StatelessWidget {
   }
 }
 
-Future<ui.Image> getPattern(Color color, Screentone screentone) async {
-  var aPatternPosition = screentone.data;
-  var width = screentone.width;
-  var height = screentone.height;
-
-  var aNextPatternPosition =
-      aPatternPosition.map((e) => e + Point(width.toDouble(), 0)).toList();
-
-  var aPaint = Paint()
-    ..color = color
-    ..strokeWidth = 1
-    ..style = PaintingStyle.stroke
-    ..strokeJoin = StrokeJoin.round
-    ..isAntiAlias = false;
-
-  // FlutterのPictureRecorderのバグのため、
-  // パターンイメージを1x1タイルではなく、2x1タイルで描画
-  //
-  // PictureRecorderのバグ
-  // 環境によって原点が(0,0)ではなく、(1,0)になるバグ
-
-  var pictureRecorder = ui.PictureRecorder();
-  Canvas patternCanvas = Canvas(pictureRecorder);
-
-  patternCanvas.drawRect(const Rect.fromLTWH(0, 0, 100, 100),
-      Paint()..color = colors.transparent());
-
-  patternCanvas.drawPoints(ui.PointMode.points, aPatternPosition, aPaint);
-  patternCanvas.drawPoints(ui.PointMode.points, aNextPatternPosition, aPaint);
-
-  final aPatternPicture = pictureRecorder.endRecording();
-  return aPatternPicture.toImage(width, height);
-}
-
 // https://stackoverflow.com/questions/70866283/custompainter-drawimage-throws-an-exception-object-has-been-disposed
 // https://stackoverflow.com/questions/52752298/how-to-draw-different-pattern-in-flutter
 class _SamplePainter extends CustomPainter {
   // final ui.Image? aPattern;
   final StrokesModel strokes;
-  final ui.Image? image;
 
-  _SamplePainter(this.strokes, this.image);
+  _SamplePainter(this.strokes);
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -99,14 +63,14 @@ class _SamplePainter extends CustomPainter {
         });
       }
 
-      if (image != null) {
+      if (stroke.screentoneImage != null) {
         final paint = Paint()
           ..strokeCap = StrokeCap.round
           ..style = PaintingStyle.stroke
           ..strokeWidth = stroke.width
           ..isAntiAlias = false
-          ..shader = ImageShader(image!, TileMode.repeated, TileMode.repeated,
-              Matrix4.identity().storage);
+          ..shader = ImageShader(stroke.screentoneImage as ui.Image,
+              TileMode.repeated, TileMode.repeated, Matrix4.identity().storage);
 
         canvas.drawPath(path, paint);
       }
@@ -116,27 +80,5 @@ class _SamplePainter extends CustomPainter {
   @override
   bool shouldRepaint(_SamplePainter oldDelegate) {
     return true;
-  }
-}
-
-class FakeDevicePixelRatio extends StatelessWidget {
-  final num fakeDevicePixelRatio;
-  final Widget child;
-
-  const FakeDevicePixelRatio(
-      {Key? key, required this.fakeDevicePixelRatio, required this.child})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    final devicePixelRatio =
-        WidgetsBinding.instance?.window.devicePixelRatio ?? 1;
-
-    final ratio = fakeDevicePixelRatio / devicePixelRatio;
-
-    return FractionallySizedBox(
-        widthFactor: 1 / ratio,
-        heightFactor: 1 / ratio,
-        child: Transform.scale(scale: ratio, child: child));
   }
 }

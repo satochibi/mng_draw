@@ -1,10 +1,11 @@
 import 'package:flutter/widgets.dart';
 import 'package:mng_draw/screentone.dart';
+import 'package:mng_draw/paint_colors.dart' as colors;
 
 class PenModel extends ChangeNotifier {
-  Color _color = const Color(0xff000000);
+  Color _color = colors.blue();
   double _width = 10;
-  Screentone _screentone = Screentone.checkered();
+  Screentone _screentone = Screentone.dense2x2();
 
   PenModel();
 

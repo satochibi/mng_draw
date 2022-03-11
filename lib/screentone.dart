@@ -1,4 +1,6 @@
+import 'dart:ui';
 import 'package:mng_draw/point.dart';
+import 'package:mng_draw/paint_colors.dart' as colors;
 
 class Screentone {
   int width;
@@ -28,6 +30,39 @@ class Screentone {
   @override
   String toString() {
     return "w: $width, h: $height, data: $data";
+  }
+
+  Future<Image> toImage(Color color) {
+    var aPatternPosition = data;
+
+    var aNextPatternPosition =
+        aPatternPosition.map((e) => e + Point(width.toDouble(), 0)).toList();
+
+    var aPaint = Paint()
+      ..color = color
+      ..strokeWidth = 1
+      ..style = PaintingStyle.stroke
+      ..strokeJoin = StrokeJoin.round
+      ..isAntiAlias = false;
+
+    // FlutterのPictureRecorderのバグのため、
+    // パターンイメージを1x1タイルではなく、2x1タイルで描画
+    //
+    // PictureRecorderのバグ
+    // 環境によって原点が(0,0)ではなく、(1,0)になるバグ
+
+    var pictureRecorder = PictureRecorder();
+    Canvas patternCanvas = Canvas(pictureRecorder);
+
+    patternCanvas.drawRect(const Rect.fromLTWH(0, 0, 100, 100),
+        Paint()..color = colors.transparent());
+
+    patternCanvas.drawPoints(PointMode.points, aPatternPosition, aPaint);
+    patternCanvas.drawPoints(PointMode.points, aNextPatternPosition, aPaint);
+
+    final aPatternPicture = pictureRecorder.endRecording();
+
+    return aPatternPicture.toImage(width, height);
   }
 
   static Screentone normal() {

@@ -1,3 +1,4 @@
+import 'dart:ui' as ui;
 import 'package:flutter/widgets.dart';
 import 'package:mng_draw/pen_model.dart';
 import 'package:mng_draw/screentone.dart';
@@ -21,12 +22,20 @@ class StrokesModel extends ChangeNotifier {
     _strokes = [];
     notifyListeners();
   }
+
+  Future<void> screentoneImage() async {
+    for (var stroke in _strokes) {
+      stroke.screentoneImage = await stroke.screentone.toImage(stroke.color);
+    }
+    // notifyListeners();
+  }
 }
 
 class Stroke {
   final List<Offset> points = [];
   Color color;
   Screentone screentone;
+  ui.Image? screentoneImage;
   double width;
 
   Stroke(this.width, this.color, this.screentone);
