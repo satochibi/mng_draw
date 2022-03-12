@@ -1,6 +1,6 @@
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
-import 'package:mng_draw/paint_colors.dart' as colors;
+import 'package:mng_draw/paint_colors.dart';
 import 'package:provider/provider.dart';
 import 'package:mng_draw/pen_model.dart';
 import 'package:mng_draw/strokes_model.dart';
@@ -43,7 +43,7 @@ class _SamplePainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     // 背景を描画
     canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height),
-        Paint()..color = colors.artBoardBackground());
+        Paint()..color = PaintColors.artBoardBackground);
 
     // 一画ごとに描画
     strokes.all.forEach((Stroke stroke) {

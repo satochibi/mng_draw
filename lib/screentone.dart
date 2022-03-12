@@ -1,6 +1,6 @@
 import 'dart:ui';
 import 'package:mng_draw/point.dart';
-import 'package:mng_draw/paint_colors.dart' as colors;
+import 'package:mng_draw/paint_colors.dart';
 
 class Screentone {
   int width;
@@ -55,7 +55,7 @@ class Screentone {
     Canvas patternCanvas = Canvas(pictureRecorder);
 
     patternCanvas.drawRect(const Rect.fromLTWH(0, 0, 100, 100),
-        Paint()..color = colors.transparent());
+        Paint()..color = PaintColors.transparent);
 
     patternCanvas.drawPoints(PointMode.points, aPatternPosition, aPaint);
     patternCanvas.drawPoints(PointMode.points, aNextPatternPosition, aPaint);
