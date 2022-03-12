@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider<PenModel>(create: (_) => PenModel()),
         ChangeNotifierProvider<StrokesModel>(create: (_) => StrokesModel())
       ],
-      child: MaterialApp(home: SafeArea(child: EditScreen())),
+      child: const MaterialApp(home: SafeArea(child: EditScreen())),
     );
   }
 }
