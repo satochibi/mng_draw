@@ -24,9 +24,9 @@ class StrokesModel extends ChangeNotifier {
   }
 
   Future<void> screentoneImage() async {
-    for (var stroke in _strokes) {
+    _strokes.forEach((stroke) async {
       stroke.screentoneImage = await stroke.screentone.toImage(stroke.color);
-    }
+    });
     // notifyListeners();
   }
 }
