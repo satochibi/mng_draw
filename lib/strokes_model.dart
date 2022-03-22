@@ -25,7 +25,8 @@ class StrokesModel extends ChangeNotifier {
 
   Future<void> screentoneImage() async {
     _strokes.forEach((stroke) async {
-      stroke.screentoneImage = await stroke.screentone.toImage(stroke.color);
+      // 処理軽減のため、スクリーントーンがnullのときだけスクリーントーン画像をセット
+      stroke.screentoneImage ??= await stroke.screentone.toImage(stroke.color);
     });
     // notifyListeners();
   }

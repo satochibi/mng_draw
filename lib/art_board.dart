@@ -62,17 +62,26 @@ class _SamplePainter extends CustomPainter {
         });
       }
 
+      // 仮のペイント
+      var paint = Paint()
+        ..strokeCap = StrokeCap.round
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = stroke.width
+        ..isAntiAlias = false
+        ..color = stroke.color;
+
+      // スクリーントーンを生成したら、そのシェーダを作ってペイント
       if (stroke.screentoneImage != null) {
-        final paint = Paint()
+        paint = Paint()
           ..strokeCap = StrokeCap.round
           ..style = PaintingStyle.stroke
           ..strokeWidth = stroke.width
           ..isAntiAlias = false
           ..shader = ImageShader(stroke.screentoneImage as ui.Image,
               TileMode.repeated, TileMode.repeated, Matrix4.identity().storage);
-
-        canvas.drawPath(path, paint);
       }
+
+      canvas.drawPath(path, paint);
     });
   }
 
