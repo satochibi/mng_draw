@@ -10,61 +10,64 @@ class EditScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          Row(
-            children: [
-              TextButton(
-                child: const Text("color"),
-                onPressed: () {
-                  showDialog(
-                      context: context,
-                      builder: (context) {
-                        return const AlertDialog(
-                          title: Text("choose a color!"),
-                          content: ChooseColorScreen(),
-                        );
-                      });
-                },
-              ),
-              TextButton(
-                  child: const Text("width"),
+      body: Container(
+        color: Colors.white,
+        child: Column(
+          children: [
+            Row(
+              children: [
+                TextButton(
+                  child: const Text("color"),
                   onPressed: () {
                     showDialog(
                         context: context,
                         builder: (context) {
-                          return AlertDialog(
-                            title: const Text("line width"),
-                            content: const ChooseWidthScreen(),
-                            actions: [
-                              TextButton(
-                                  onPressed: () => Navigator.pop(context),
-                                  child: const Text("OK")),
-                            ],
+                          return const AlertDialog(
+                            title: Text("choose a color!"),
+                            content: ChooseColorScreen(),
                           );
                         });
-                  }),
-              TextButton(
-                  child: const Text("screentone"),
-                  onPressed: () {
-                    showDialog(
-                        context: context,
-                        builder: (context) {
-                          return AlertDialog(
-                            title: const Text("choose a screentone!"),
-                            content: const ChooseScreentoneScreen(),
-                            actions: [
-                              TextButton(
-                                  onPressed: () => Navigator.pop(context),
-                                  child: const Text("OK")),
-                            ],
-                          );
-                        });
-                  }),
-            ],
-          ),
-          const Expanded(child: ArtBoard()),
-        ],
+                  },
+                ),
+                TextButton(
+                    child: const Text("width"),
+                    onPressed: () {
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: const Text("line width"),
+                              content: const ChooseWidthScreen(),
+                              actions: [
+                                TextButton(
+                                    onPressed: () => Navigator.pop(context),
+                                    child: const Text("OK")),
+                              ],
+                            );
+                          });
+                    }),
+                TextButton(
+                    child: const Text("screentone"),
+                    onPressed: () {
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: const Text("choose a screentone!"),
+                              content: const ChooseScreentoneScreen(),
+                              actions: [
+                                TextButton(
+                                    onPressed: () => Navigator.pop(context),
+                                    child: const Text("OK")),
+                              ],
+                            );
+                          });
+                    }),
+              ],
+            ),
+            const Expanded(child: ArtBoard()),
+          ],
+        ),
       ),
     );
   }
