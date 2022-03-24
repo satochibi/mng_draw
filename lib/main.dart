@@ -21,6 +21,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider<MemoModel>(create: (_) => MemoModel(4, 3))
       ],
       child: MaterialApp(
+          debugShowCheckedModeBanner: false,
           home: Container(
               color: Colors.white, child: const SafeArea(child: EditScreen()))),
     );
