@@ -1,5 +1,6 @@
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
+import 'package:mng_draw/memo_model.dart';
 import 'package:mng_draw/paint_colors.dart';
 import 'package:provider/provider.dart';
 import 'package:mng_draw/pen_model.dart';
@@ -13,17 +14,31 @@ class ArtBoard extends StatelessWidget {
   Widget build(BuildContext context) {
     final pen = Provider.of<PenModel>(context);
     final strokes = Provider.of<StrokesModel>(context);
+    final memoModel = Provider.of<MemoModel>(context);
 
     return FutureBuilder(
       future: strokes.screentoneImage(),
       builder: (context, snapshot) {
-        return FakeDevicePixelRatio(
-          fakeDevicePixelRatio: 1.0,
-          child: GestureDetector(
-            onPanDown: (details) => strokes.add(pen, details.localPosition),
-            onPanUpdate: (details) => strokes.update(details.localPosition),
-            child: CustomPaint(
-              painter: _SamplePainter(strokes),
+        return Container(
+          color: PaintColors.outOfRangeBackground,
+          child: Align(
+            alignment: Alignment.center,
+            child: AspectRatio(
+              aspectRatio: memoModel.aspectRatio,
+              child: FakeDevicePixelRatio(
+                fakeDevicePixelRatio: 1.0,
+                child: GestureDetector(
+                  onPanDown: (details) =>
+                      strokes.add(pen, details.localPosition),
+                  onPanUpdate: (details) =>
+                      strokes.update(details.localPosition),
+                  child: ClipRect(
+                    child: CustomPaint(
+                      painter: _SamplePainter(strokes),
+                    ),
+                  ),
+                ),
+              ),
             ),
           ),
         );

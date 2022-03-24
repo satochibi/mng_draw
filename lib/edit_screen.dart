@@ -65,7 +65,9 @@ class EditScreen extends StatelessWidget {
                     }),
               ],
             ),
-            const Expanded(child: ArtBoard()),
+            const Expanded(
+              child: ArtBoard(),
+            ),
           ],
         ),
       ),
