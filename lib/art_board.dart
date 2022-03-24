@@ -29,12 +29,12 @@ class ArtBoard extends StatelessWidget {
                 fakeDevicePixelRatio: 1.0,
                 child: GestureDetector(
                   onPanDown: (details) =>
-                      strokes.add(pen, details.localPosition),
+                      strokes.add(memoModel, pen, details.localPosition),
                   onPanUpdate: (details) =>
                       strokes.update(details.localPosition),
                   child: ClipRect(
                     child: CustomPaint(
-                      painter: _SamplePainter(strokes),
+                      painter: _SamplePainter(memoModel, strokes),
                     ),
                   ),
                 ),
@@ -51,11 +51,15 @@ class ArtBoard extends StatelessWidget {
 // https://stackoverflow.com/questions/52752298/how-to-draw-different-pattern-in-flutter
 class _SamplePainter extends CustomPainter {
   final StrokesModel strokes;
+  final MemoModel memoModel;
 
-  _SamplePainter(this.strokes);
+  _SamplePainter(this.memoModel, this.strokes);
 
   @override
   void paint(Canvas canvas, Size size) {
+    memoModel.canvasScale = size.width / memoModel.aspectRatioW;
+    // debugPrint(memoModel.canvasScale.toString());
+
     // 背景を描画
     canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height),
         Paint()..color = PaintColors.artBoardBackground);
@@ -65,14 +69,18 @@ class _SamplePainter extends CustomPainter {
       var path = Path();
 
       if (stroke.points.length == 1) {
-        path.moveTo(stroke.points[0].dx, stroke.points[0].dy);
-        path.lineTo(stroke.points[0].dx, stroke.points[0].dy);
+        path.moveTo(stroke.points[0].dx * memoModel.canvasScale,
+            stroke.points[0].dy * memoModel.canvasScale);
+        path.lineTo(stroke.points[0].dx * memoModel.canvasScale,
+            stroke.points[0].dy * memoModel.canvasScale);
       } else {
         stroke.points.asMap().forEach((int index, Offset point) {
           if (index == 0) {
-            path.moveTo(point.dx, point.dy);
+            path.moveTo(point.dx * memoModel.canvasScale,
+                point.dy * memoModel.canvasScale);
           } else {
-            path.lineTo(point.dx, point.dy);
+            path.lineTo(point.dx * memoModel.canvasScale,
+                point.dy * memoModel.canvasScale);
           }
         });
       }

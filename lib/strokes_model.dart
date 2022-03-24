@@ -1,20 +1,24 @@
 import 'dart:ui' as ui;
 import 'package:flutter/widgets.dart';
 import 'package:mng_draw/pen_model.dart';
+import 'package:mng_draw/memo_model.dart';
 import 'package:mng_draw/screentone.dart';
 
 class StrokesModel extends ChangeNotifier {
   List<Stroke> _strokes = [];
+  MemoModel memoModel = MemoModel(4, 3);
 
   get all => _strokes;
 
-  void add(PenModel pen, Offset offset) {
-    _strokes.add(Stroke(pen.width, pen.color, pen.screentone)..add(offset));
+  void add(MemoModel memoModel, PenModel pen, Offset offset) {
+    this.memoModel = memoModel;
+    _strokes.add(Stroke(pen.width, pen.color, pen.screentone)
+      ..add(offset / memoModel.canvasScale));
     notifyListeners();
   }
 
   void update(Offset offset) {
-    _strokes.last.add(offset);
+    _strokes.last.add(offset / memoModel.canvasScale);
     notifyListeners();
   }
 
