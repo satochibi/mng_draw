@@ -24,7 +24,7 @@ class ArtBoard extends StatelessWidget {
         return Container(
           color: PaintColors.outOfRangeBackground,
           child: Align(
-            alignment: Alignment.center,
+            alignment: Alignment.topCenter,
             child: AspectRatio(
               aspectRatio: memo.aspectRatio,
               child: FakeDevicePixelRatio(
