@@ -4,6 +4,7 @@ import 'package:mng_draw/screentone.dart';
 import 'package:provider/provider.dart';
 import 'package:mng_draw/pen_model.dart';
 import 'package:mng_draw/fake_device_pixel_ratio_widget.dart';
+import 'package:mng_draw/settings_model.dart';
 
 class ScreentoneIcon extends StatefulWidget {
   final int index;
@@ -16,9 +17,12 @@ class _ScreentoneIconState extends State<ScreentoneIcon> {
   @override
   Widget build(BuildContext context) {
     final pen = Provider.of<PenModel>(context);
+    final settings = Provider.of<SettingsModel>(context);
 
     return FutureBuilder(
-      future: Screentone.basicScreentones[widget.index].toImage(pen.color),
+      future: Screentone.basicScreentones[widget.index]
+          .scale(settings.screentoneScale)
+          .toImage(pen.color),
       builder: (context, snapshot) {
         return FakeDevicePixelRatio(
           fakeDevicePixelRatio: 1.0,
