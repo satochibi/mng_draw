@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:mng_draw/edit_screen.dart';
 import 'package:mng_draw/memo_model.dart';
 import 'package:mng_draw/settings_model.dart';
 import 'package:provider/provider.dart';
 import 'package:mng_draw/pen_model.dart';
 import 'package:mng_draw/strokes_model.dart';
+import 'package:mng_draw/switch_screen_widget.dart';
 
 void main() {
   runApp(const MyApp());
@@ -25,7 +25,9 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
           debugShowCheckedModeBanner: false,
           home: Container(
-              color: Colors.white, child: const SafeArea(child: EditScreen()))),
+              color: Colors.white,
+              child: const SafeArea(
+                  child: SwitchScreen(mode: ScreenType.sample)))),
     );
   }
 }
