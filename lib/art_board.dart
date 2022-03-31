@@ -9,7 +9,30 @@ import 'package:mng_draw/strokes_model.dart';
 import 'package:mng_draw/fake_device_pixel_ratio_widget.dart';
 
 class ArtBoard extends StatelessWidget {
-  const ArtBoard({Key? key}) : super(key: key);
+  double height;
+  double width;
+  final double aspectRatioW;
+  final double aspectRatioH;
+  final bool isDrawable;
+
+  ArtBoard(
+      {Key? key,
+      this.width = double.infinity,
+      this.height = double.infinity,
+      required this.aspectRatioW,
+      required this.aspectRatioH,
+      required this.isDrawable})
+      : super(key: key) {
+    if (width == double.infinity) {
+      if (height != double.infinity) {
+        width = aspectRatioW * (height / aspectRatioH);
+      }
+    } else if (height == double.infinity) {
+      if (width != double.infinity) {
+        height = aspectRatioH * (width / aspectRatioW);
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -18,25 +41,35 @@ class ArtBoard extends StatelessWidget {
     final memo = Provider.of<MemoModel>(context);
     final settings = Provider.of<SettingsModel>(context);
 
+    memo.aspectRatioH = aspectRatioH;
+    memo.aspectRatioW = aspectRatioW;
+
     return FutureBuilder(
       future: strokes.screentoneImage(),
       builder: (context, snapshot) {
-        return Container(
-          color: PaintColors.outOfRangeBackground,
-          child: Align(
-            alignment: Alignment.topCenter,
-            child: AspectRatio(
-              aspectRatio: memo.aspectRatio,
-              child: FakeDevicePixelRatio(
-                fakeDevicePixelRatio: 1.0,
-                child: GestureDetector(
-                  onPanDown: (details) =>
-                      strokes.add(settings, memo, pen, details.localPosition),
-                  onPanUpdate: (details) =>
-                      strokes.update(details.localPosition),
-                  child: ClipRect(
-                    child: CustomPaint(
-                      painter: _SamplePainter(memo, strokes),
+        return SizedBox(
+          height: height,
+          width: width,
+          child: FakeDevicePixelRatio(
+            fakeDevicePixelRatio: 1.0,
+            child: Container(
+              color: PaintColors.outOfRangeBackground,
+              child: Align(
+                alignment: Alignment.center,
+                child: AspectRatio(
+                  aspectRatio: aspectRatioW / aspectRatioH,
+                  child: GestureDetector(
+                    onPanDown: (details) => isDrawable
+                        ? strokes.add(
+                            settings, memo, pen, details.localPosition)
+                        : null,
+                    onPanUpdate: (details) => isDrawable
+                        ? strokes.update(details.localPosition)
+                        : null,
+                    child: ClipRect(
+                      child: CustomPaint(
+                        painter: _SamplePainter(memo, strokes),
+                      ),
                     ),
                   ),
                 ),

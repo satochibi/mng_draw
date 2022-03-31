@@ -1,12 +1,11 @@
 import 'package:flutter/widgets.dart';
 
 class MemoModel extends ChangeNotifier {
-  int _aspectRatioW = 4;
-  int _aspectRatioH = 3;
+  double aspectRatioW = 4;
+  double aspectRatioH = 3;
   double canvasScale = 1;
 
-  MemoModel(this._aspectRatioW, this._aspectRatioH);
+  MemoModel();
 
-  double get aspectRatio => _aspectRatioW.toDouble() / _aspectRatioH.toDouble();
-  int get aspectRatioW => _aspectRatioW;
+  double get aspectRatio => aspectRatioW.toDouble() / aspectRatioH.toDouble();
 }

@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider<PenModel>(create: (_) => PenModel()),
         ChangeNotifierProvider<StrokesModel>(create: (_) => StrokesModel()),
-        ChangeNotifierProvider<MemoModel>(create: (_) => MemoModel(4, 3)),
+        ChangeNotifierProvider<MemoModel>(create: (_) => MemoModel()),
         ChangeNotifierProvider<SettingsModel>(create: (_) => SettingsModel())
       ],
       child: MaterialApp(

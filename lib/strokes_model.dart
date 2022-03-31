@@ -7,7 +7,7 @@ import 'package:mng_draw/settings_model.dart';
 
 class StrokesModel extends ChangeNotifier {
   List<Stroke> _strokes = [];
-  MemoModel memo = MemoModel(4, 3);
+  MemoModel memo = MemoModel();
   SettingsModel settings = SettingsModel();
 
   get all => _strokes;

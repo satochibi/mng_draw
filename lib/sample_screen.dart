@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mng_draw/art_board.dart';
 
 class SampleScreen extends StatelessWidget {
   const SampleScreen({Key? key}) : super(key: key);
@@ -30,12 +31,25 @@ class SampleScreen extends StatelessWidget {
             },
           ),
         ),
-        body: Container(
-          color: Colors.blue,
-          child: Container(
-            color: Colors.red,
-            width: 256,
-            height: 192,
+        body: SizedBox(
+          height: 500,
+          child: Card(
+            elevation: 4.0,
+            margin: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  child: ArtBoard(
+                    height: 192,
+                    aspectRatioW: 4,
+                    aspectRatioH: 3,
+                    isDrawable: false,
+                  ),
+                ),
+              ],
+            ),
           ),
         ));
   }
