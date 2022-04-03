@@ -10,8 +10,6 @@ class SampleScreen extends StatelessWidget {
     final double cardHeight =
         (MediaQuery.of(context).size.width < 650) ? 105 : 192;
 
-    debugPrint(MediaQuery.of(context).size.width.toString());
-
     return Scaffold(
         appBar: AppBar(
           title: const Text(
