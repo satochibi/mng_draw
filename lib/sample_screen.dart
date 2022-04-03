@@ -92,8 +92,10 @@ class SampleScreen extends StatelessWidget {
                                       child: Container(
                                         width: 22,
                                         color: const Color(0xffcfcfcf),
-                                        child: const Icon(Icons.play_arrow,
-                                            color: Colors.white, size: 14),
+                                        child: const FittedBox(
+                                          child: Icon(Icons.play_arrow,
+                                              color: Colors.white),
+                                        ),
                                       ),
                                     ),
                                     const FittedBox(
@@ -121,8 +123,10 @@ class SampleScreen extends StatelessWidget {
                                       child: Container(
                                         width: 22,
                                         color: const Color(0xffffa600),
-                                        child: const Icon(Icons.star,
-                                            color: Colors.white, size: 14),
+                                        child: const FittedBox(
+                                          child: Icon(Icons.star,
+                                              color: Colors.white),
+                                        ),
                                       ),
                                     ),
                                     const FittedBox(
@@ -150,8 +154,10 @@ class SampleScreen extends StatelessWidget {
                                       child: Container(
                                         width: 22,
                                         color: const Color(0xff2693FF),
-                                        child: const Icon(Icons.download,
-                                            color: Colors.white, size: 14),
+                                        child: const FittedBox(
+                                          child: Icon(Icons.download,
+                                              color: Colors.white),
+                                        ),
                                       ),
                                     ),
                                     const FittedBox(
