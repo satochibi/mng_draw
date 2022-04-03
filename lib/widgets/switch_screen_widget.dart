@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:mng_draw/edit_screen.dart';
-import 'package:mng_draw/sample_screen.dart';
+import 'package:mng_draw/screens/edit_screen.dart';
+import 'package:mng_draw/screens/sample_screen.dart';
 
 enum ScreenType { edit, sample }
 

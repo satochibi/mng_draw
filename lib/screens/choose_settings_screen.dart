@@ -1,26 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:mng_draw/pen_model.dart';
 import 'package:provider/provider.dart';
+import 'package:mng_draw/models/settings_model.dart';
 
-class ChooseWidthScreen extends StatelessWidget {
-  const ChooseWidthScreen({Key? key}) : super(key: key);
+class ChooseSettingsScreen extends StatelessWidget {
+  const ChooseSettingsScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final pen = Provider.of<PenModel>(context);
+    final settings = Provider.of<SettingsModel>(context);
     return SizedBox(
       height: 50,
       width: double.maxFinite,
       child: Slider(
-        label: '${pen.width.round()}',
+        label: '${settings.screentoneScale.round()}',
         min: 1,
-        max: 50,
-        value: pen.width,
+        max: 20,
+        value: settings.screentoneScale.toDouble(),
         activeColor: Colors.orange,
         inactiveColor: Colors.blueAccent,
         divisions: 49,
         onChanged: (double value) {
-          pen.width = value.roundToDouble();
+          settings.screentoneScale = value.round();
         },
       ),
     );

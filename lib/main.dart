@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:mng_draw/memo_model.dart';
-import 'package:mng_draw/settings_model.dart';
 import 'package:provider/provider.dart';
-import 'package:mng_draw/pen_model.dart';
-import 'package:mng_draw/strokes_model.dart';
-import 'package:mng_draw/switch_screen_widget.dart';
+import 'package:mng_draw/models/memo_model.dart';
+import 'package:mng_draw/models/settings_model.dart';
+import 'package:mng_draw/models/pen_model.dart';
+import 'package:mng_draw/models/strokes_model.dart';
+import 'package:mng_draw/widgets/switch_screen_widget.dart';
 
 void main() {
   runApp(const MyApp());

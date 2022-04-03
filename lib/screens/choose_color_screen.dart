@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:mng_draw/paint_colors.dart';
-import 'package:mng_draw/pen_model.dart';
+import 'package:mng_draw/classes/paint_colors.dart';
+import 'package:mng_draw/models/pen_model.dart';
 
 class ChooseColorScreen extends StatelessWidget {
   const ChooseColorScreen({Key? key}) : super(key: key);

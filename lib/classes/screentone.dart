@@ -1,6 +1,6 @@
 import 'dart:ui';
-import 'package:mng_draw/point.dart';
-import 'package:mng_draw/paint_colors.dart';
+import 'package:mng_draw/classes/point.dart';
+import 'package:mng_draw/classes/paint_colors.dart';
 
 class Screentone {
   int width;

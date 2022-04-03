@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:mng_draw/paint_colors.dart';
-import 'package:mng_draw/screentone.dart';
-import 'package:mng_draw/screentone_icon.dart';
 import 'package:provider/provider.dart';
-import 'package:mng_draw/pen_model.dart';
+import 'package:mng_draw/classes/paint_colors.dart';
+import 'package:mng_draw/classes/screentone.dart';
+import 'package:mng_draw/models/pen_model.dart';
+import 'package:mng_draw/components/screentone_icon.dart';
 
 class ChooseScreentoneScreen extends StatelessWidget {
   const ChooseScreentoneScreen({Key? key}) : super(key: key);

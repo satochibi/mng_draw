@@ -1,12 +1,12 @@
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
-import 'package:mng_draw/memo_model.dart';
-import 'package:mng_draw/paint_colors.dart';
-import 'package:mng_draw/settings_model.dart';
 import 'package:provider/provider.dart';
-import 'package:mng_draw/pen_model.dart';
-import 'package:mng_draw/strokes_model.dart';
-import 'package:mng_draw/fake_device_pixel_ratio_widget.dart';
+import 'package:mng_draw/classes/paint_colors.dart';
+import 'package:mng_draw/models/memo_model.dart';
+import 'package:mng_draw/models/settings_model.dart';
+import 'package:mng_draw/models/pen_model.dart';
+import 'package:mng_draw/models/strokes_model.dart';
+import 'package:mng_draw/widgets/fake_device_pixel_ratio_widget.dart';
 
 class ArtBoard extends StatelessWidget {
   double height;

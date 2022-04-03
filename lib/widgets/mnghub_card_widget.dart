@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:mng_draw/art_board.dart';
-import 'package:mng_draw/mng_memo.dart';
+import 'package:mng_draw/classes/mng_memo.dart';
+import 'package:mng_draw/widgets/art_board.dart';
 
 class MNGHubCard extends StatelessWidget {
   final MNGMemo memo;

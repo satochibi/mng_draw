@@ -1,9 +1,9 @@
 import 'dart:ui' as ui;
 import 'package:flutter/widgets.dart';
-import 'package:mng_draw/pen_model.dart';
-import 'package:mng_draw/memo_model.dart';
-import 'package:mng_draw/screentone.dart';
-import 'package:mng_draw/settings_model.dart';
+import 'package:mng_draw/classes/screentone.dart';
+import 'package:mng_draw/models/pen_model.dart';
+import 'package:mng_draw/models/memo_model.dart';
+import 'package:mng_draw/models/settings_model.dart';
 
 class StrokesModel extends ChangeNotifier {
   List<Stroke> _strokes = [];

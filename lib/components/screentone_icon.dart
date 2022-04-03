@@ -1,10 +1,10 @@
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
-import 'package:mng_draw/screentone.dart';
 import 'package:provider/provider.dart';
-import 'package:mng_draw/pen_model.dart';
-import 'package:mng_draw/fake_device_pixel_ratio_widget.dart';
-import 'package:mng_draw/settings_model.dart';
+import 'package:mng_draw/classes/screentone.dart';
+import 'package:mng_draw/models/pen_model.dart';
+import 'package:mng_draw/models/settings_model.dart';
+import 'package:mng_draw/widgets/fake_device_pixel_ratio_widget.dart';
 
 class ScreentoneIcon extends StatefulWidget {
   final int index;

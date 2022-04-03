@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:mng_draw/mng_memo.dart';
-import 'package:mng_draw/mnghub_card_widget.dart';
+import 'package:mng_draw/classes/mng_memo.dart';
+import 'package:mng_draw/widgets/mnghub_card_widget.dart';
 
 class SampleScreen extends StatelessWidget {
   const SampleScreen({Key? key}) : super(key: key);
