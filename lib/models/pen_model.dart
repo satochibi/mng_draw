@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
-import 'package:mng_draw/screentone.dart';
-import 'package:mng_draw/paint_colors.dart';
+import 'package:mng_draw/classes/screentone.dart';
+import 'package:mng_draw/classes/paint_colors.dart';
 
 class PenModel extends ChangeNotifier {
   Color _color = PaintColors.black;

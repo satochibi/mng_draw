@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:mng_draw/art_board.dart';
-import 'package:mng_draw/choose_color_screen.dart';
-import 'package:mng_draw/choose_width_screen.dart';
-import 'package:mng_draw/choose_screentone_screen.dart';
-import 'package:mng_draw/choose_settings_screen.dart';
+import 'package:mng_draw/widgets/art_board.dart';
+import 'package:mng_draw/screens/choose_color_screen.dart';
+import 'package:mng_draw/screens/choose_width_screen.dart';
+import 'package:mng_draw/screens/choose_screentone_screen.dart';
+import 'package:mng_draw/screens/choose_settings_screen.dart';
 
 class EditScreen extends StatelessWidget {
   const EditScreen({Key? key}) : super(key: key);
@@ -83,8 +83,11 @@ class EditScreen extends StatelessWidget {
                     }),
               ],
             ),
-            const Expanded(
-              child: ArtBoard(),
+            Expanded(
+              child: ArtBoard(
+                artBoardInfo: ArtBoardInfo(const Size(4, 3)),
+                isDrawable: true,
+              ),
             ),
           ],
         ),
