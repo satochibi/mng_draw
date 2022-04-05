@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:mng_draw/models/memo_model.dart';
 import 'package:mng_draw/models/settings_model.dart';
 import 'package:mng_draw/models/pen_model.dart';
 import 'package:mng_draw/models/strokes_model.dart';
@@ -19,7 +18,6 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider<PenModel>(create: (_) => PenModel()),
         ChangeNotifierProvider<StrokesModel>(create: (_) => StrokesModel()),
-        ChangeNotifierProvider<MemoModel>(create: (_) => MemoModel()),
         ChangeNotifierProvider<SettingsModel>(create: (_) => SettingsModel())
       ],
       child: MaterialApp(
