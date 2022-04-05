@@ -23,7 +23,7 @@ class MNGHubCard extends StatelessWidget {
               padding: const EdgeInsets.all(8),
               child: ArtBoard(
                 height: height,
-                artBoardInfo: ArtBoardInfo(const Size(4, 3)),
+                artBoardInfo: ArtBoardInfo(const Size(4, 3), true),
                 isDrawable: false,
               ),
             ),

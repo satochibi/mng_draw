@@ -13,8 +13,9 @@ class ArtBoardInfo {
   int scaleFactor = 1;
   Offset absolutePosition = Offset.zero;
   Size size = Size.zero;
+  final bool isClip;
 
-  ArtBoardInfo(this.aspectRatio);
+  ArtBoardInfo(this.aspectRatio, this.isClip);
 
   sizeRecalculation(Size surfaceSize) {
     Rect artBoardRect = Rect.zero;
@@ -210,6 +211,24 @@ class _SamplePainter extends CustomPainter {
       }
 
       canvas.drawPath(path, paint);
+
+      // アートボード範囲でクリッピング
+      if (artBoardInfo.isClip) {
+        canvas.drawPath(
+            Path.combine(
+                PathOperation.difference,
+                Path()..addRect(Rect.fromLTWH(0, 0, size.width, size.height)),
+                Path()
+                  ..addRect(Rect.fromLTWH(
+                      artBoardInfo.absolutePosition.dx,
+                      artBoardInfo.absolutePosition.dy,
+                      artBoardInfo.size.width,
+                      artBoardInfo.size.height))),
+            Paint()
+              ..color = PaintColors.outOfRangeBackground
+              ..style = PaintingStyle.fill
+              ..strokeWidth = 3.0);
+      }
     });
   }
 

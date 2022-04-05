@@ -85,7 +85,7 @@ class EditScreen extends StatelessWidget {
             ),
             Expanded(
               child: ArtBoard(
-                artBoardInfo: ArtBoardInfo(const Size(4, 3)),
+                artBoardInfo: ArtBoardInfo(const Size(4, 3), false),
                 isDrawable: true,
               ),
             ),
