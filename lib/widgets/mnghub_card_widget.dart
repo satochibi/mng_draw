@@ -24,7 +24,7 @@ class MNGHubCard extends StatelessWidget {
               child: ArtBoard(
                 height: height,
                 artBoardInfo: ArtBoardInfo(const Size(4, 3)),
-                isDrawable: true,
+                isDrawable: false,
               ),
             ),
             Flexible(

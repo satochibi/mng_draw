@@ -125,11 +125,14 @@ class ArtBoard extends StatelessWidget {
             child: FakeDevicePixelRatio(
               fakeDevicePixelRatio: 1.0,
               child: GestureDetector(
-                onPanDown: (details) => strokes.add(settings, pen,
-                    artBoardInfo.inputToModel(details.localPosition)),
-                onPanUpdate: (details) => strokes
-                    .update(artBoardInfo.inputToModel(details.localPosition)),
-                onPanEnd: (details) => debugPrint("end"),
+                onPanDown: (details) => isDrawable
+                    ? strokes.add(settings, pen,
+                        artBoardInfo.inputToModel(details.localPosition))
+                    : null,
+                onPanUpdate: (details) => isDrawable
+                    ? strokes.update(
+                        artBoardInfo.inputToModel(details.localPosition))
+                    : null,
                 child: ClipRect(
                   child: CustomPaint(
                     painter: _SamplePainter(artBoardInfo, strokes),
