@@ -26,12 +26,21 @@ class ChooseScreentoneScreen extends StatelessWidget {
                 pen.screentone = Screentone.basicScreentones[index];
                 Navigator.of(context).pop();
               },
-              child: ClipRRect(
-                borderRadius: const BorderRadius.all(Radius.circular(50)),
-                child: ScreentoneIcon(
-                  index: index,
+              child: Stack(alignment: Alignment.center, children: [
+                ClipRRect(
+                  borderRadius: const BorderRadius.all(Radius.circular(50)),
+                  child: ScreentoneIcon(
+                    index: index,
+                  ),
                 ),
-              ),
+                (Screentone.basicScreentones[index] == pen.screentone)
+                    ? const Icon(
+                        Icons.check,
+                        color: PaintColors.lasso,
+                        size: 50,
+                      )
+                    : Container()
+              ]),
             );
           }),
     );

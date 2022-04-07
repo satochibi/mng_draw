@@ -21,16 +21,25 @@ class ChooseColorScreen extends StatelessWidget {
                 pen.color = PaintColors.basicColors[index];
                 Navigator.of(context).pop();
               },
-              child: Container(
-                margin: const EdgeInsets.all(3),
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.black),
-                  color: PaintColors.basicColors[index],
-                  shape: BoxShape.circle,
+              child: Stack(alignment: Alignment.center, children: [
+                Container(
+                  margin: const EdgeInsets.all(3),
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.black),
+                    color: PaintColors.basicColors[index],
+                    shape: BoxShape.circle,
+                  ),
                 ),
-              ),
+                (PaintColors.basicColors[index] == pen.color)
+                    ? const Icon(
+                        Icons.check,
+                        color: PaintColors.lasso,
+                        size: 30,
+                      )
+                    : Container()
+              ]),
             );
           }),
     );
