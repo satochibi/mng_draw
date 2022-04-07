@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mng_draw/widgets/art_board.dart';
-import 'package:mng_draw/screens/choose_color_screen.dart';
-import 'package:mng_draw/screens/choose_width_screen.dart';
-import 'package:mng_draw/screens/choose_screentone_screen.dart';
+import 'package:mng_draw/screens/choose_pen_screen.dart';
 import 'package:mng_draw/screens/choose_settings_screen.dart';
 
 class EditScreen extends StatelessWidget {
@@ -21,52 +19,23 @@ class EditScreen extends StatelessWidget {
                 direction: Axis.horizontal,
                 children: [
                   TextButton(
-                    child: const Text("color"),
+                    child: const Text("pen"),
                     onPressed: () {
                       showDialog(
                           context: context,
                           builder: (context) {
-                            return const AlertDialog(
-                              title: Text("choose a color!"),
-                              content: ChooseColorScreen(),
+                            return AlertDialog(
+                              title: const Text("pen settings"),
+                              content: const ChoosePenScreen(),
+                              actions: [
+                                TextButton(
+                                    onPressed: () => Navigator.pop(context),
+                                    child: const Text("OK"))
+                              ],
                             );
                           });
                     },
                   ),
-                  TextButton(
-                      child: const Text("width"),
-                      onPressed: () {
-                        showDialog(
-                            context: context,
-                            builder: (context) {
-                              return AlertDialog(
-                                title: const Text("line width"),
-                                content: const ChooseWidthScreen(),
-                                actions: [
-                                  TextButton(
-                                      onPressed: () => Navigator.pop(context),
-                                      child: const Text("OK")),
-                                ],
-                              );
-                            });
-                      }),
-                  TextButton(
-                      child: const Text("screentone"),
-                      onPressed: () {
-                        showDialog(
-                            context: context,
-                            builder: (context) {
-                              return AlertDialog(
-                                title: const Text("choose a screentone!"),
-                                content: const ChooseScreentoneScreen(),
-                                actions: [
-                                  TextButton(
-                                      onPressed: () => Navigator.pop(context),
-                                      child: const Text("OK")),
-                                ],
-                              );
-                            });
-                      }),
                   TextButton(
                       child: const Text("settings"),
                       onPressed: () {
