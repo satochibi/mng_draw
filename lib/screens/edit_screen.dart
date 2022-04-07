@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mng_draw/models/settings_model.dart';
 import 'package:mng_draw/widgets/art_board.dart';
 import 'package:mng_draw/screens/choose_pen_screen.dart';
@@ -22,8 +25,11 @@ class EditScreen extends StatelessWidget {
               child: Wrap(
                 direction: Axis.horizontal,
                 children: [
-                  TextButton(
-                    child: const Text("pen"),
+                  IconButton(
+                    icon: const Icon(
+                      Icons.edit,
+                      color: Colors.blue,
+                    ),
                     onPressed: () {
                       showDialog(
                           context: context,
@@ -40,8 +46,13 @@ class EditScreen extends StatelessWidget {
                           });
                     },
                   ),
-                  TextButton(
-                      child: const Text("system"),
+                  const IconButton(
+                      icon: FaIcon(FontAwesomeIcons.eraser), onPressed: null),
+                  const IconButton(icon: Icon(Icons.undo), onPressed: null),
+                  const IconButton(icon: Icon(Icons.redo), onPressed: null),
+                  IconButton(
+                      icon: const Icon(Icons.settings),
+                      color: Colors.blue,
                       onPressed: () {
                         showDialog(
                             context: context,
