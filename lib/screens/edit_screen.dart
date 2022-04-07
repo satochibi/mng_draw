@@ -38,9 +38,12 @@ class EditScreen extends StatelessWidget {
                               title: const Text("pen settings"),
                               content: const ChoosePenScreen(),
                               actions: [
-                                TextButton(
-                                    onPressed: () => Navigator.pop(context),
-                                    child: const Text("OK"))
+                                SizedBox(
+                                  width: double.infinity,
+                                  child: ElevatedButton(
+                                      onPressed: () => Navigator.pop(context),
+                                      child: const Text("OK")),
+                                )
                               ],
                             );
                           });
@@ -61,9 +64,12 @@ class EditScreen extends StatelessWidget {
                                 title: const Text("system settings"),
                                 content: const ChooseSettingsScreen(),
                                 actions: [
-                                  TextButton(
-                                      onPressed: () => Navigator.pop(context),
-                                      child: const Text("OK")),
+                                  SizedBox(
+                                    width: double.infinity,
+                                    child: ElevatedButton(
+                                        onPressed: () => Navigator.pop(context),
+                                        child: const Text("OK")),
+                                  ),
                                 ],
                               );
                             });

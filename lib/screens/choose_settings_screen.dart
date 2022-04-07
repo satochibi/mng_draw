@@ -10,6 +10,7 @@ class ChooseSettingsScreen extends StatelessWidget {
     final settings = Provider.of<SettingsModel>(context);
     return SizedBox(
       width: double.maxFinite,
+      height: 100,
       child: ListView(children: [
         SizedBox(
           height: 50,

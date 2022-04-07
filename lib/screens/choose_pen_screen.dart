@@ -13,6 +13,7 @@ class ChoosePenScreen extends StatelessWidget {
     final pen = Provider.of<PenModel>(context);
     return SizedBox(
       width: double.maxFinite,
+      height: 300,
       child: ListView(children: [
         SizedBox(
           height: 50,
