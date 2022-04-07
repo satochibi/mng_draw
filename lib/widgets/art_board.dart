@@ -160,8 +160,10 @@ class _SamplePainter extends CustomPainter {
     // debugPrint(memo.canvasScale.toString());
 
     // 背景を描画
-    canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height),
-        Paint()..color = PaintColors.outOfRangeBackground);
+    if (!artBoardInfo.isClip) {
+      canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height),
+          Paint()..color = PaintColors.outOfRangeBackground);
+    }
 
     // アートボードの絵画
     artBoardInfo.sizeRecalculation(size);
@@ -217,25 +219,25 @@ class _SamplePainter extends CustomPainter {
       }
 
       canvas.drawPath(path, paint);
-
-      // アートボード範囲でクリッピング
-      if (artBoardInfo.isClip) {
-        canvas.drawPath(
-            Path.combine(
-                PathOperation.difference,
-                Path()..addRect(Rect.fromLTWH(0, 0, size.width, size.height)),
-                Path()
-                  ..addRect(Rect.fromLTWH(
-                      artBoardInfo.absolutePosition.dx,
-                      artBoardInfo.absolutePosition.dy,
-                      artBoardInfo.size.width,
-                      artBoardInfo.size.height))),
-            Paint()
-              ..color = PaintColors.outOfRangeBackground
-              ..style = PaintingStyle.fill
-              ..strokeWidth = 3.0);
-      }
     });
+
+    // アートボード範囲でクリッピング
+    if (artBoardInfo.isClip) {
+      canvas.drawPath(
+          Path.combine(
+              PathOperation.difference,
+              Path()..addRect(Rect.fromLTWH(0, 0, size.width, size.height)),
+              Path()
+                ..addRect(Rect.fromLTWH(
+                    artBoardInfo.absolutePosition.dx,
+                    artBoardInfo.absolutePosition.dy,
+                    artBoardInfo.size.width,
+                    artBoardInfo.size.height))),
+          Paint()
+            ..color = PaintColors.outOfRangeBackground
+            ..style = PaintingStyle.fill
+            ..strokeWidth = 3.0);
+    }
   }
 
   @override
