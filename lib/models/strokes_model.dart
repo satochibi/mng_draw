@@ -10,9 +10,12 @@ class StrokesModel extends ChangeNotifier {
 
   get all => _strokes;
 
-  void add(SettingsModel settingsModel, PenModel pen, Offset offset) {
+  void add(SettingsModel settingsModel, PenModel pen, int artBoardScaleFactor,
+      Offset offset) {
     settings = settingsModel;
-    _strokes.add(Stroke(pen.width, pen.color, pen.screentone)..add(offset));
+    _strokes.add(
+        Stroke(pen.width, pen.color, pen.screentone, artBoardScaleFactor)
+          ..add(offset));
     notifyListeners();
   }
 
@@ -53,8 +56,9 @@ class Stroke {
   Screentone screentone;
   ui.Image? screentoneImage;
   double width;
+  int artBoardScaleFactor;
 
-  Stroke(this.width, this.color, this.screentone);
+  Stroke(this.width, this.color, this.screentone, this.artBoardScaleFactor);
 
   add(Offset offset) {
     points.add(offset);

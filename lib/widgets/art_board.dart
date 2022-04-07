@@ -127,7 +127,7 @@ class ArtBoard extends StatelessWidget {
               fakeDevicePixelRatio: 1.0,
               child: GestureDetector(
                 onPanDown: (details) => isDrawable
-                    ? strokes.add(settings, pen,
+                    ? strokes.add(settings, pen, artBoardInfo.scaleFactor,
                         artBoardInfo.inputToModel(details.localPosition))
                     : null,
                 onPanUpdate: (details) => isDrawable
@@ -195,7 +195,10 @@ class _SamplePainter extends CustomPainter {
       var paint = Paint()
         ..strokeCap = StrokeCap.round
         ..style = PaintingStyle.stroke
-        ..strokeWidth = stroke.width
+        ..strokeWidth = (artBoardInfo.scaleFactor *
+                stroke.width /
+                stroke.artBoardScaleFactor)
+            .ceilToDouble()
         ..isAntiAlias = false
         ..color = stroke.color;
 
@@ -204,7 +207,10 @@ class _SamplePainter extends CustomPainter {
         paint = Paint()
           ..strokeCap = StrokeCap.round
           ..style = PaintingStyle.stroke
-          ..strokeWidth = stroke.width
+          ..strokeWidth = (artBoardInfo.scaleFactor *
+                  stroke.width /
+                  stroke.artBoardScaleFactor)
+              .ceilToDouble()
           ..isAntiAlias = false
           ..shader = ImageShader(stroke.screentoneImage as ui.Image,
               TileMode.repeated, TileMode.repeated, Matrix4.identity().storage);

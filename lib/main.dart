@@ -24,8 +24,8 @@ class MyApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           home: Container(
               color: Colors.white,
-              child: const SafeArea(
-                  child: SwitchScreen(mode: ScreenType.sample)))),
+              child:
+                  const SafeArea(child: SwitchScreen(mode: ScreenType.edit)))),
     );
   }
 }
