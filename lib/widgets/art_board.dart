@@ -235,8 +235,7 @@ class _SamplePainter extends CustomPainter {
                     artBoardInfo.size.height))),
           Paint()
             ..color = PaintColors.outOfRangeBackground
-            ..style = PaintingStyle.fill
-            ..strokeWidth = 3.0);
+            ..style = PaintingStyle.fill);
     }
   }
 
