@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:mng_draw/models/settings_model.dart';
 import 'package:mng_draw/widgets/art_board.dart';
 import 'package:mng_draw/screens/choose_pen_screen.dart';
 import 'package:mng_draw/screens/choose_settings_screen.dart';
@@ -8,6 +10,8 @@ class EditScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final settings = Provider.of<SettingsModel>(context);
+
     return Scaffold(
       body: Container(
         color: Colors.white,
@@ -37,13 +41,13 @@ class EditScreen extends StatelessWidget {
                     },
                   ),
                   TextButton(
-                      child: const Text("settings"),
+                      child: const Text("system"),
                       onPressed: () {
                         showDialog(
                             context: context,
                             builder: (context) {
                               return AlertDialog(
-                                title: const Text("screentone scale"),
+                                title: const Text("system settings"),
                                 content: const ChooseSettingsScreen(),
                                 actions: [
                                   TextButton(
@@ -58,7 +62,7 @@ class EditScreen extends StatelessWidget {
             ),
             Expanded(
               child: ArtBoard(
-                artBoardInfo: ArtBoardInfo(const Size(4, 3), false),
+                artBoardInfo: ArtBoardInfo(const Size(4, 3), settings.isClip),
                 isDrawable: true,
               ),
             ),

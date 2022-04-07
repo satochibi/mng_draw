@@ -9,20 +9,28 @@ class ChooseSettingsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final settings = Provider.of<SettingsModel>(context);
     return SizedBox(
-      height: 50,
       width: double.maxFinite,
-      child: Slider(
-        label: '${settings.screentoneScale.round()}',
-        min: 1,
-        max: 20,
-        value: settings.screentoneScale.toDouble(),
-        activeColor: Colors.orange,
-        inactiveColor: Colors.blueAccent,
-        divisions: 49,
-        onChanged: (double value) {
-          settings.screentoneScale = value.round();
-        },
-      ),
+      child: ListView(children: [
+        SizedBox(
+          height: 50,
+          width: double.maxFinite,
+          child: Slider(
+            label: '${settings.screentoneScale.round()}',
+            min: 1,
+            max: 20,
+            value: settings.screentoneScale.toDouble(),
+            activeColor: Colors.orange,
+            inactiveColor: Colors.blueAccent,
+            divisions: 49,
+            onChanged: (double value) {
+              settings.screentoneScale = value.round();
+            },
+          ),
+        ),
+        SwitchListTile(
+            value: settings.isClip,
+            onChanged: (value) => {settings.isClip = value})
+      ]),
     );
   }
 }
