@@ -24,6 +24,16 @@ class StrokesModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  get isEmpty => _strokes.isEmpty;
+
+  void removeLast() {
+    if (_strokes.isEmpty) {
+      return;
+    }
+    _strokes.removeLast();
+    notifyListeners();
+  }
+
   void clear() {
     _strokes = [];
     notifyListeners();

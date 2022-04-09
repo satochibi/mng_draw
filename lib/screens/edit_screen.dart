@@ -1,8 +1,7 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:mng_draw/models/strokes_model.dart';
 import 'package:mng_draw/models/settings_model.dart';
 import 'package:mng_draw/widgets/art_board.dart';
 import 'package:mng_draw/screens/choose_pen_screen.dart';
@@ -14,6 +13,7 @@ class EditScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final settings = Provider.of<SettingsModel>(context);
+    final strokes = Provider.of<StrokesModel>(context);
 
     return Scaffold(
       body: Container(
@@ -50,9 +50,26 @@ class EditScreen extends StatelessWidget {
                     },
                   ),
                   const IconButton(
-                      icon: FaIcon(FontAwesomeIcons.eraser), onPressed: null),
-                  const IconButton(icon: Icon(Icons.undo), onPressed: null),
-                  const IconButton(icon: Icon(Icons.redo), onPressed: null),
+                    icon: FaIcon(FontAwesomeIcons.eraser),
+                    color: Colors.blue,
+                    onPressed: null,
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.undo),
+                    color: Colors.blue,
+                    onPressed:
+                        strokes.isEmpty ? null : () => strokes.removeLast(),
+                  ),
+                  const IconButton(
+                    icon: Icon(Icons.redo),
+                    color: Colors.blue,
+                    onPressed: null,
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.delete),
+                    color: Colors.blue,
+                    onPressed: strokes.isEmpty ? null : () => strokes.clear(),
+                  ),
                   IconButton(
                       icon: const Icon(Icons.settings),
                       color: Colors.blue,
