@@ -20,6 +20,9 @@ class StrokesModel extends ChangeNotifier {
   }
 
   void update(Offset offset) {
+    if (isEmpty) {
+      return;
+    }
     _strokes.last.add(offset);
     notifyListeners();
   }
@@ -27,7 +30,7 @@ class StrokesModel extends ChangeNotifier {
   get isEmpty => _strokes.isEmpty;
 
   void removeLast() {
-    if (_strokes.isEmpty) {
+    if (isEmpty) {
       return;
     }
     _strokes.removeLast();
@@ -35,6 +38,9 @@ class StrokesModel extends ChangeNotifier {
   }
 
   void clear() {
+    if (isEmpty) {
+      return;
+    }
     _strokes = [];
     notifyListeners();
   }
