@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:mng_draw/models/settings_model.dart';
 import 'package:mng_draw/models/pen_model.dart';
 import 'package:mng_draw/models/strokes_model.dart';
+import 'package:mng_draw/models/achievement_model.dart';
 import 'package:mng_draw/widgets/switch_screen_widget.dart';
 
 void main() {
@@ -18,7 +19,9 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider<PenModel>(create: (_) => PenModel()),
         ChangeNotifierProvider<StrokesModel>(create: (_) => StrokesModel()),
-        ChangeNotifierProvider<SettingsModel>(create: (_) => SettingsModel())
+        ChangeNotifierProvider<SettingsModel>(create: (_) => SettingsModel()),
+        ChangeNotifierProvider<AchievementModel>(
+            create: (_) => AchievementModel())
       ],
       child: MaterialApp(
           debugShowCheckedModeBanner: false,

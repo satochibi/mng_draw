@@ -1,11 +1,12 @@
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:vector_math/vector_math_64.dart';
+import 'package:vector_math/vector_math_64.dart' hide Colors;
 import 'package:mng_draw/classes/paint_colors.dart';
 import 'package:mng_draw/models/settings_model.dart';
 import 'package:mng_draw/models/pen_model.dart';
 import 'package:mng_draw/models/strokes_model.dart';
+import 'package:mng_draw/models/achievement_model.dart';
 import 'package:mng_draw/widgets/fake_device_pixel_ratio_widget.dart';
 
 class ArtBoardInfo {
@@ -85,6 +86,8 @@ class ArtBoardInfo {
   }
 }
 
+enum TouchEvent { down, moved }
+
 class ArtBoard extends StatelessWidget {
   double height;
   double width;
@@ -111,11 +114,32 @@ class ArtBoard extends StatelessWidget {
     }
   }
 
+  void achievementCalculation(
+      AchievementModel achievement, Offset pos, TouchEvent e) {
+    switch (e) {
+      case TouchEvent.down:
+        achievement.prevPositionOfPen = null;
+        achievement.velocityOfPen = null;
+        achievement.totalDistanceOfPenRun += 1;
+        achievement.totalNumberOfPenStrokes += 1;
+        break;
+      case TouchEvent.moved:
+        achievement.velocityOfPen = (pos - achievement.prevPositionOfPen!);
+        achievement.totalDistanceOfPenRun +=
+            (achievement.velocityOfPen!).distance.ceil();
+        break;
+    }
+    // debugPrint("合計距離: ${achievement.totalDistanceOfPenRun}px");
+    // debugPrint("合計画数: ${achievement.totalNumberOfPenStrokes}");
+    achievement.prevPositionOfPen = pos;
+  }
+
   @override
   Widget build(BuildContext context) {
     final pen = Provider.of<PenModel>(context);
     final strokes = Provider.of<StrokesModel>(context);
     final settings = Provider.of<SettingsModel>(context);
+    final achievement = Provider.of<AchievementModel>(context);
 
     return FutureBuilder(
         future: strokes.screentoneImage(),
@@ -126,14 +150,21 @@ class ArtBoard extends StatelessWidget {
             child: FakeDevicePixelRatio(
               fakeDevicePixelRatio: 1.0,
               child: GestureDetector(
-                onPanDown: (details) => isDrawable
-                    ? strokes.add(settings, pen, artBoardInfo.scaleFactor,
-                        artBoardInfo.inputToModel(details.localPosition))
-                    : null,
-                onPanUpdate: (details) => isDrawable
-                    ? strokes.update(
-                        artBoardInfo.inputToModel(details.localPosition))
-                    : null,
+                onPanDown: (details) {
+                  if (isDrawable) {
+                    final pos = details.localPosition;
+                    strokes.add(settings, pen, artBoardInfo.scaleFactor,
+                        artBoardInfo.inputToModel(pos));
+                    achievementCalculation(achievement, pos, TouchEvent.down);
+                  }
+                },
+                onPanUpdate: (details) {
+                  if (isDrawable) {
+                    final pos = details.localPosition;
+                    strokes.update(artBoardInfo.inputToModel(pos));
+                    achievementCalculation(achievement, pos, TouchEvent.moved);
+                  }
+                },
                 child: ClipRect(
                   child: CustomPaint(
                     painter: _SamplePainter(artBoardInfo, strokes),
