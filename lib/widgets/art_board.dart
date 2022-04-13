@@ -2,6 +2,7 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vector_math/vector_math_64.dart' hide Colors;
+import 'package:intl/intl.dart';
 import 'package:mng_draw/classes/paint_colors.dart';
 import 'package:mng_draw/models/settings_model.dart';
 import 'package:mng_draw/models/pen_model.dart';
@@ -126,11 +127,12 @@ class ArtBoard extends StatelessWidget {
       case TouchEvent.moved:
         achievement.velocityOfPen = (pos - achievement.prevPositionOfPen!);
         achievement.totalDistanceOfPenRun +=
-            (achievement.velocityOfPen!).distance.ceil();
+            (achievement.velocityOfPen!).distance;
         break;
     }
-    // debugPrint("合計距離: ${achievement.totalDistanceOfPenRun}px");
-    // debugPrint("合計画数: ${achievement.totalNumberOfPenStrokes}");
+    // debugPrint(
+    //     "ペンを走らせた距離: ${NumberFormat(".0").format(achievement.totalDistanceOfPenRun)}px");
+    // debugPrint("ペンを走らせた回数: ${achievement.totalNumberOfPenStrokes}");
     achievement.prevPositionOfPen = pos;
   }
 

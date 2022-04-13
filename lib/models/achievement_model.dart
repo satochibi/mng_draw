@@ -4,12 +4,12 @@ class AchievementModel extends ChangeNotifier {
   Offset? prevPositionOfPen;
   Offset? velocityOfPen;
 
-  int _totalDistanceOfPenRun = 0;
+  double _totalDistanceOfPenRun = 0;
   int _totalNumberOfPenStrokes = 0;
 
-  int get totalDistanceOfPenRun => _totalDistanceOfPenRun;
+  double get totalDistanceOfPenRun => _totalDistanceOfPenRun;
 
-  set totalDistanceOfPenRun(int value) {
+  set totalDistanceOfPenRun(double value) {
     _totalDistanceOfPenRun = value;
     notifyListeners();
   }
