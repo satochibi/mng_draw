@@ -127,11 +127,10 @@ class ArtBoard extends StatelessWidget {
       case TouchEvent.moved:
         achievement.velocityOfPen = (pos - achievement.prevPositionOfPen!);
         achievement.totalDistanceOfPenRun +=
-            (achievement.velocityOfPen!).distance;
+            achievement.distance(pos, achievement.prevPositionOfPen!);
         break;
     }
-    // debugPrint(
-    //     "ペンを走らせた距離: ${NumberFormat(".0").format(achievement.totalDistanceOfPenRun)}px");
+    debugPrint("ペンを走らせた距離: ${achievement.totalDistanceOfPenRun}px");
     // debugPrint("ペンを走らせた回数: ${achievement.totalNumberOfPenStrokes}");
     achievement.prevPositionOfPen = pos;
   }
