@@ -30,7 +30,9 @@ class ChooseSettingsScreen extends StatelessWidget {
         ),
         SwitchListTile(
             value: settings.isClip,
-            onChanged: (value) => {settings.isClip = value})
+            onChanged: (value) {
+              settings.isClip = value;
+            })
       ]),
     );
   }

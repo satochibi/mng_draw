@@ -14,6 +14,7 @@ class EditScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final settings = Provider.of<SettingsModel>(context);
     final strokes = Provider.of<StrokesModel>(context);
+    final artBoardKey = GlobalObjectKey<ArtBoardState>(context);
 
     return Scaffold(
       body: Container(
@@ -71,6 +72,11 @@ class EditScreen extends StatelessWidget {
                     onPressed: strokes.isEmpty ? null : () => strokes.clear(),
                   ),
                   IconButton(
+                    icon: const Icon(Icons.fullscreen),
+                    color: Colors.blue,
+                    onPressed: () => artBoardKey.currentState?.fullscreen(),
+                  ),
+                  IconButton(
                       icon: const Icon(Icons.settings),
                       color: Colors.blue,
                       onPressed: () {
@@ -96,8 +102,12 @@ class EditScreen extends StatelessWidget {
             ),
             Expanded(
               child: ArtBoard(
-                artBoardInfo: ArtBoardInfo(const Size(4, 3), settings.isClip),
+                key: artBoardKey,
+                width: double.infinity,
+                height: double.infinity,
+                aspectRatio: const Size(4, 3),
                 isDrawable: true,
+                isClip: settings.isClip,
               ),
             ),
           ],

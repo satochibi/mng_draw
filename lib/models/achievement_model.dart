@@ -2,9 +2,6 @@ import 'dart:math';
 import 'package:flutter/widgets.dart';
 
 class AchievementModel extends ChangeNotifier {
-  Offset? prevPositionOfPen;
-  Offset? velocityOfPen;
-
   int _totalDistanceOfPenRun = 0;
   int _totalNumberOfPenStrokes = 0;
 

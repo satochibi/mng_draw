@@ -16,11 +16,10 @@ class ArtBoardInfo {
   Offset defaultAbsolutePosition = Offset.zero;
   // アートボードの大きさ
   Size defalutSize = Size.zero;
-  final bool isClip;
+  bool isClip;
   // デフォルトからの位置の変位(変化時)
   Offset deltaPosition = Offset.zero;
   // 行列
-  // このオブジェクトが再生成されるたびに、matrixesが空になるのが問題
   List<Matrix4> matrixes = [];
 
   ArtBoardInfo(this.aspectRatio, this.isClip);
@@ -68,8 +67,6 @@ class ArtBoardInfo {
       defaultAbsolutePosition =
           vector3ToOffset(matrix * offsetToVector3(defaultAbsolutePosition));
     }
-    // matrixesが空になるときとならない時がある
-    // debugPrint(matrixes.isEmpty.toString());
   }
 
   Matrix4 matrixToAspectCoordinates() {
@@ -105,50 +102,71 @@ class ArtBoardInfo {
 
 enum TouchEvent { down, moved }
 
-class ArtBoard extends StatelessWidget {
-  double height;
-  double width;
+class ArtBoard extends StatefulWidget {
+  double? height;
+  double? width;
+  final Size aspectRatio;
   final bool isDrawable;
-  final ArtBoardInfo artBoardInfo;
+  final bool isClip;
 
   ArtBoard(
       {Key? key,
-      this.width = double.infinity,
-      this.height = double.infinity,
-      required this.artBoardInfo,
-      required this.isDrawable})
+      this.width,
+      this.height,
+      required this.aspectRatio,
+      required this.isDrawable,
+      required this.isClip})
       : super(key: key) {
-    if (width == double.infinity) {
-      if (height != double.infinity) {
-        width = artBoardInfo.aspectRatio.width *
-            (height / artBoardInfo.aspectRatio.height);
+    if (width == null) {
+      if (height != null) {
+        width = aspectRatio.width * (height! / aspectRatio.height);
       }
-    } else if (height == double.infinity) {
-      if (width != double.infinity) {
-        height = artBoardInfo.aspectRatio.height *
-            (width / artBoardInfo.aspectRatio.width);
+    } else if (height == null) {
+      if (width != null) {
+        height = aspectRatio.height * (width! / aspectRatio.width);
       }
     }
+  }
+
+  @override
+  State<ArtBoard> createState() => ArtBoardState();
+}
+
+class ArtBoardState extends State<ArtBoard> {
+  ArtBoardInfo artBoardInfo = ArtBoardInfo(const Size(1, 1), true);
+  Offset? prevPositionOfPen;
+  Offset? velocityOfPen;
+
+  @override
+  void initState() {
+    super.initState();
+    artBoardInfo = ArtBoardInfo(widget.aspectRatio, widget.isClip);
+  }
+
+  void fullscreen() {
+    setState(() {
+      artBoardInfo.matrixes.clear();
+    });
   }
 
   void achievementCalculation(
       AchievementModel achievement, Offset pos, TouchEvent e) {
     switch (e) {
       case TouchEvent.down:
-        achievement.prevPositionOfPen = null;
-        achievement.velocityOfPen = null;
+        prevPositionOfPen = null;
+        velocityOfPen = null;
         achievement.totalDistanceOfPenRun += 1;
         achievement.totalNumberOfPenStrokes += 1;
         break;
       case TouchEvent.moved:
-        achievement.velocityOfPen = (pos - achievement.prevPositionOfPen!);
+        velocityOfPen = (pos - prevPositionOfPen!);
         achievement.totalDistanceOfPenRun +=
-            achievement.distance(pos, achievement.prevPositionOfPen!);
+            achievement.distance(pos, prevPositionOfPen!);
         break;
     }
     // debugPrint("ペンを走らせた距離: ${achievement.totalDistanceOfPenRun}px");
     // debugPrint("ペンを走らせた回数: ${achievement.totalNumberOfPenStrokes}");
-    achievement.prevPositionOfPen = pos;
+    prevPositionOfPen = pos;
   }
 
   @override
@@ -158,18 +176,19 @@ class ArtBoard extends StatelessWidget {
     final settings = Provider.of<SettingsModel>(context);
     final achievement = Provider.of<AchievementModel>(context);
     final repaint = ChangeNotifier();
+    artBoardInfo.isClip = settings.isClip;
 
     return FutureBuilder(
         future: strokes.screentoneImage(),
         builder: (context, snapshot) {
           return SizedBox(
-            height: height,
-            width: width,
+            height: widget.height,
+            width: widget.width,
             child: FakeDevicePixelRatio(
               fakeDevicePixelRatio: 1.0,
               child: GestureDetector(
                 onScaleStart: (details) {
-                  if (isDrawable) {
+                  if (widget.isDrawable) {
                     if (details.pointerCount == 1) {
                       final pos = details.localFocalPoint;
                       strokes.add(settings, pen, artBoardInfo.scaleFactor,
@@ -179,7 +198,7 @@ class ArtBoard extends StatelessWidget {
                   }
                 },
                 onScaleUpdate: (details) {
-                  if (isDrawable) {
+                  if (widget.isDrawable) {
                     if (details.pointerCount == 1) {
                       final pos = details.localFocalPoint;
                       strokes.update(artBoardInfo.inputToModel(pos));
