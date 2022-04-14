@@ -12,9 +12,16 @@ import 'package:mng_draw/widgets/fake_device_pixel_ratio_widget.dart';
 class ArtBoardInfo {
   final Size aspectRatio;
   int scaleFactor = 1;
-  Offset absolutePosition = Offset.zero;
-  Size size = Size.zero;
+  // アートボードの左上座標
+  Offset defaultAbsolutePosition = Offset.zero;
+  // アートボードの大きさ
+  Size defalutSize = Size.zero;
   final bool isClip;
+  // デフォルトからの位置の変位(変化時)
+  Offset deltaPosition = Offset.zero;
+  // 行列
+  // このオブジェクトが再生成されるたびに、matrixesが空になるのが問題
+  List<Matrix4> matrixes = [];
 
   ArtBoardInfo(this.aspectRatio, this.isClip);
 
@@ -50,14 +57,24 @@ class ArtBoardInfo {
           (surfaceSize.height - artBoardHeight) / 2 + artBoardHeight);
     }
 
-    absolutePosition = Offset(artBoardRect.left, artBoardRect.top);
-    size = Size((artBoardRect.right - artBoardRect.left).abs(),
+    defaultAbsolutePosition = Offset(artBoardRect.left, artBoardRect.top);
+    defalutSize = Size((artBoardRect.right - artBoardRect.left).abs(),
         (artBoardRect.bottom - artBoardRect.top).abs());
+
+    defaultAbsolutePosition += deltaPosition;
+
+    if (matrixes.isNotEmpty) {
+      final matrix = matrixes.reduce((total, element) => total * element);
+      defaultAbsolutePosition =
+          vector3ToOffset(matrix * offsetToVector3(defaultAbsolutePosition));
+    }
+    // matrixesが空になるときとならない時がある
+    // debugPrint(matrixes.isEmpty.toString());
   }
 
   Matrix4 matrixToAspectCoordinates() {
     Matrix4 A = Matrix4.translationValues(
-        -absolutePosition.dx, -absolutePosition.dy, 0);
+        -defaultAbsolutePosition.dx, -defaultAbsolutePosition.dy, 0);
     Matrix4 B = Matrix4.diagonal3Values(
         1.0 / scaleFactor, 1.0 / scaleFactor, 1.0 / scaleFactor);
     return B * A;
@@ -140,6 +157,7 @@ class ArtBoard extends StatelessWidget {
     final strokes = Provider.of<StrokesModel>(context);
     final settings = Provider.of<SettingsModel>(context);
     final achievement = Provider.of<AchievementModel>(context);
+    final repaint = ChangeNotifier();
 
     return FutureBuilder(
         future: strokes.screentoneImage(),
@@ -172,12 +190,20 @@ class ArtBoard extends StatelessWidget {
                       final posDelta = details.focalPointDelta;
                       final scale = details.scale;
                       final rotation = details.rotation;
+                      artBoardInfo.deltaPosition += posDelta;
+                      repaint.notifyListeners();
                     }
                   }
                 },
+                onScaleEnd: (details) {
+                  artBoardInfo.matrixes.add(Matrix4.translation(artBoardInfo
+                      .offsetToVector3(artBoardInfo.deltaPosition)));
+                  artBoardInfo.deltaPosition = Offset.zero;
+                  repaint.notifyListeners();
+                },
                 child: ClipRect(
                   child: CustomPaint(
-                    painter: _SamplePainter(artBoardInfo, strokes),
+                    painter: _SamplePainter(repaint, artBoardInfo, strokes),
                   ),
                 ),
               ),
@@ -193,23 +219,23 @@ class _SamplePainter extends CustomPainter {
   final StrokesModel strokes;
   final ArtBoardInfo artBoardInfo;
 
-  _SamplePainter(this.artBoardInfo, this.strokes);
+  _SamplePainter(Listenable repaint, this.artBoardInfo, this.strokes)
+      : super(repaint: repaint);
 
   @override
-  void paint(Canvas canvas, Size size) {
-    // memo.canvasScale = size.width / memo.aspectRatio.width;
-    // debugPrint(memo.canvasScale.toString());
-
+  void paint(Canvas canvas, Size surfaceSize) {
     // 背景を描画
     if (!artBoardInfo.isClip) {
-      canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height),
+      canvas.drawRect(
+          Rect.fromLTWH(0, 0, surfaceSize.width, surfaceSize.height),
           Paint()..color = PaintColors.outOfRangeBackground);
     }
 
     // アートボードの絵画
-    artBoardInfo.sizeRecalculation(size);
+    artBoardInfo.sizeRecalculation(surfaceSize);
 
-    canvas.drawRect(artBoardInfo.absolutePosition & artBoardInfo.size,
+    canvas.drawRect(
+        artBoardInfo.defaultAbsolutePosition & artBoardInfo.defalutSize,
         Paint()..color = PaintColors.artBoardBackground);
 
     // 一画ごとに描画
@@ -267,13 +293,15 @@ class _SamplePainter extends CustomPainter {
       canvas.drawPath(
           Path.combine(
               PathOperation.difference,
-              Path()..addRect(Rect.fromLTWH(0, 0, size.width, size.height)),
+              Path()
+                ..addRect(
+                    Rect.fromLTWH(0, 0, surfaceSize.width, surfaceSize.height)),
               Path()
                 ..addRect(Rect.fromLTWH(
-                    artBoardInfo.absolutePosition.dx,
-                    artBoardInfo.absolutePosition.dy,
-                    artBoardInfo.size.width,
-                    artBoardInfo.size.height))),
+                    artBoardInfo.defaultAbsolutePosition.dx,
+                    artBoardInfo.defaultAbsolutePosition.dy,
+                    artBoardInfo.defalutSize.width,
+                    artBoardInfo.defalutSize.height))),
           Paint()
             ..color = PaintColors.outOfRangeBackground
             ..style = PaintingStyle.fill);
