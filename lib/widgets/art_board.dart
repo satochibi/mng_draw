@@ -2,7 +2,6 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vector_math/vector_math_64.dart' hide Colors;
-import 'package:intl/intl.dart';
 import 'package:mng_draw/classes/paint_colors.dart';
 import 'package:mng_draw/models/settings_model.dart';
 import 'package:mng_draw/models/pen_model.dart';
@@ -130,7 +129,7 @@ class ArtBoard extends StatelessWidget {
             achievement.distance(pos, achievement.prevPositionOfPen!);
         break;
     }
-    debugPrint("ペンを走らせた距離: ${achievement.totalDistanceOfPenRun}px");
+    // debugPrint("ペンを走らせた距離: ${achievement.totalDistanceOfPenRun}px");
     // debugPrint("ペンを走らせた回数: ${achievement.totalNumberOfPenStrokes}");
     achievement.prevPositionOfPen = pos;
   }
@@ -151,19 +150,29 @@ class ArtBoard extends StatelessWidget {
             child: FakeDevicePixelRatio(
               fakeDevicePixelRatio: 1.0,
               child: GestureDetector(
-                onPanDown: (details) {
+                onScaleStart: (details) {
                   if (isDrawable) {
-                    final pos = details.localPosition;
-                    strokes.add(settings, pen, artBoardInfo.scaleFactor,
-                        artBoardInfo.inputToModel(pos));
-                    achievementCalculation(achievement, pos, TouchEvent.down);
+                    if (details.pointerCount == 1) {
+                      final pos = details.localFocalPoint;
+                      strokes.add(settings, pen, artBoardInfo.scaleFactor,
+                          artBoardInfo.inputToModel(pos));
+                      achievementCalculation(achievement, pos, TouchEvent.down);
+                    }
                   }
                 },
-                onPanUpdate: (details) {
+                onScaleUpdate: (details) {
                   if (isDrawable) {
-                    final pos = details.localPosition;
-                    strokes.update(artBoardInfo.inputToModel(pos));
-                    achievementCalculation(achievement, pos, TouchEvent.moved);
+                    if (details.pointerCount == 1) {
+                      final pos = details.localFocalPoint;
+                      strokes.update(artBoardInfo.inputToModel(pos));
+                      achievementCalculation(
+                          achievement, pos, TouchEvent.moved);
+                    } else if (details.pointerCount >= 2) {
+                      final pos = details.localFocalPoint;
+                      final posDelta = details.focalPointDelta;
+                      final scale = details.scale;
+                      final rotation = details.rotation;
+                    }
                   }
                 },
                 child: ClipRect(
