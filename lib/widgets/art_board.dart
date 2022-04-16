@@ -13,14 +13,20 @@ class ArtBoardInfo {
   final Size aspectRatio;
   int scaleFactor = 1;
   // アートボードの左上座標
-  Offset defaultAbsolutePosition = Offset.zero;
+  Map<String, Offset> defaultAbsolutePosition = {
+    'left-top': Offset.zero,
+    'right-top': Offset.zero,
+    'left-bottom': Offset.zero,
+    'right-bottom': Offset.zero,
+  };
+
   // アートボードの大きさ
   Size defalutSize = Size.zero;
   bool isClip;
   // デフォルトからの位置の変位(変化時)
-  Offset deltaPosition = Offset.zero;
-  // 行列
-  List<Matrix4> matrixes = [];
+  Matrix4 matrixInProgress = Matrix4.identity();
+  // 完了した行列
+  List<Matrix4> completedMatrixes = [];
 
   ArtBoardInfo(this.aspectRatio, this.isClip);
 
@@ -56,25 +62,57 @@ class ArtBoardInfo {
           (surfaceSize.height - artBoardHeight) / 2 + artBoardHeight);
     }
 
-    defaultAbsolutePosition = Offset(artBoardRect.left, artBoardRect.top);
+    defaultAbsolutePosition['left-top'] =
+        Offset(artBoardRect.left, artBoardRect.top);
     defalutSize = Size((artBoardRect.right - artBoardRect.left).abs(),
         (artBoardRect.bottom - artBoardRect.top).abs());
+    defaultAbsolutePosition['right-top'] =
+        defaultAbsolutePosition['left-top']! + Offset(defalutSize.width, 0);
+    defaultAbsolutePosition['left-bottom'] =
+        defaultAbsolutePosition['left-top']! + Offset(0, defalutSize.height);
+    defaultAbsolutePosition['right-bottom'] =
+        defaultAbsolutePosition['left-top']! +
+            Offset(defalutSize.width, defalutSize.height);
 
-    defaultAbsolutePosition += deltaPosition;
+    // 行列による変換
+    defaultAbsolutePosition = defaultAbsolutePosition.map((key, value) =>
+        MapEntry(
+            key, vector3ToOffset(matrixInProgress * offsetToVector3(value))));
 
-    if (matrixes.isNotEmpty) {
-      final matrix = matrixes.reduce((total, element) => total * element);
-      defaultAbsolutePosition =
-          vector3ToOffset(matrix * offsetToVector3(defaultAbsolutePosition));
+    // 行列が確定したものたちで変換
+    if (completedMatrixes.isNotEmpty) {
+      final matrix =
+          completedMatrixes.reduce((total, element) => total * element);
+      completedMatrixes.clear();
+      completedMatrixes.add(matrix);
+      defaultAbsolutePosition = defaultAbsolutePosition.map((key, value) =>
+          MapEntry(key, vector3ToOffset(matrix * offsetToVector3(value))));
     }
   }
 
+  Matrix4 matrixRotationAroundPivot(Offset pivot, double radians) {
+    final Matrix4 translation1 = Matrix4.translation(offsetToVector3(pivot));
+    final Matrix4 translation2 =
+        Matrix4.translation(offsetToVector3(pivot.scale(-1, -1)));
+    final Matrix4 rotation = Matrix4.rotationZ(radians);
+    return translation1 * rotation * translation2;
+  }
+
+  Matrix4 matrixScaleAroundPivot(Offset pivot, double scaleFactor) {
+    final Matrix4 translation1 = Matrix4.translation(offsetToVector3(pivot));
+    final Matrix4 translation2 =
+        Matrix4.translation(offsetToVector3(pivot.scale(-1, -1)));
+    final Matrix4 scale = Matrix4.diagonal3(Vector3.all(scaleFactor));
+    return translation1 * scale * translation2;
+  }
+
   Matrix4 matrixToAspectCoordinates() {
-    Matrix4 A = Matrix4.translationValues(
-        -defaultAbsolutePosition.dx, -defaultAbsolutePosition.dy, 0);
-    Matrix4 B = Matrix4.diagonal3Values(
-        1.0 / scaleFactor, 1.0 / scaleFactor, 1.0 / scaleFactor);
-    return B * A;
+    final Matrix4 translation = Matrix4.translationValues(
+        -defaultAbsolutePosition['left-top']!.dx,
+        -defaultAbsolutePosition['left-top']!.dy,
+        0);
+    final Matrix4 scale = Matrix4.diagonal3(Vector3.all(1.0 / scaleFactor));
+    return scale * translation;
   }
 
   Matrix4 inverseMatrixToAbsoluteCoordinates() {
@@ -136,6 +174,7 @@ class ArtBoardState extends State<ArtBoard> {
   ArtBoardInfo artBoardInfo = ArtBoardInfo(const Size(1, 1), true);
   Offset? prevPositionOfPen;
   Offset? velocityOfPen;
+  Offset posOffset = Offset.zero;
 
   @override
   void initState() {
@@ -145,7 +184,7 @@ class ArtBoardState extends State<ArtBoard> {
 
   void fullscreen() {
     setState(() {
-      artBoardInfo.matrixes.clear();
+      artBoardInfo.completedMatrixes.clear();
     });
   }
 
@@ -209,15 +248,19 @@ class ArtBoardState extends State<ArtBoard> {
                       final posDelta = details.focalPointDelta;
                       final scale = details.scale;
                       final rotation = details.rotation;
-                      artBoardInfo.deltaPosition += posDelta;
+                      posOffset += posDelta;
+                      artBoardInfo.matrixInProgress = Matrix4.translation(
+                          artBoardInfo.offsetToVector3(posOffset));
+
                       repaint.notifyListeners();
                     }
                   }
                 },
                 onScaleEnd: (details) {
-                  artBoardInfo.matrixes.add(Matrix4.translation(artBoardInfo
-                      .offsetToVector3(artBoardInfo.deltaPosition)));
-                  artBoardInfo.deltaPosition = Offset.zero;
+                  // artBoardInfo.completedMatrixes.add(Matrix4.translation(
+                  //     artBoardInfo
+                  //         .offsetToVector3(artBoardInfo.deltaPosition)));
+                  // artBoardInfo.deltaPosition = Offset.zero;
                   repaint.notifyListeners();
                 },
                 child: ClipRect(
@@ -254,7 +297,11 @@ class _SamplePainter extends CustomPainter {
     artBoardInfo.sizeRecalculation(surfaceSize);
 
     canvas.drawRect(
-        artBoardInfo.defaultAbsolutePosition & artBoardInfo.defalutSize,
+        Rect.fromLTRB(
+            artBoardInfo.defaultAbsolutePosition['left-top']!.dx,
+            artBoardInfo.defaultAbsolutePosition['left-top']!.dy,
+            artBoardInfo.defaultAbsolutePosition['right-bottom']!.dx,
+            artBoardInfo.defaultAbsolutePosition['right-bottom']!.dy),
         Paint()..color = PaintColors.artBoardBackground);
 
     // 一画ごとに描画
@@ -316,11 +363,11 @@ class _SamplePainter extends CustomPainter {
                 ..addRect(
                     Rect.fromLTWH(0, 0, surfaceSize.width, surfaceSize.height)),
               Path()
-                ..addRect(Rect.fromLTWH(
-                    artBoardInfo.defaultAbsolutePosition.dx,
-                    artBoardInfo.defaultAbsolutePosition.dy,
-                    artBoardInfo.defalutSize.width,
-                    artBoardInfo.defalutSize.height))),
+                ..addRect(Rect.fromLTRB(
+                    artBoardInfo.defaultAbsolutePosition['left-top']!.dx,
+                    artBoardInfo.defaultAbsolutePosition['left-top']!.dy,
+                    artBoardInfo.defaultAbsolutePosition['right-bottom']!.dx,
+                    artBoardInfo.defaultAbsolutePosition['right-bottom']!.dy))),
           Paint()
             ..color = PaintColors.outOfRangeBackground
             ..style = PaintingStyle.fill);
