@@ -86,6 +86,8 @@ class ArtBoardInfo {
   getCompleteMatrixes() {
     final matrix =
         completedMatrixes.reduce((total, element) => total * element);
+    completedMatrixes.clear();
+    completedMatrixes.add(matrix);
     return matrix;
   }
 
@@ -114,10 +116,14 @@ class ArtBoardInfo {
   }
 
   Matrix4 matrixToAspectCoordinates() {
-    final Matrix4 translation = Matrix4.translationValues(
-        -defaultAbsolutePosition['left-top']!.dx,
-        -defaultAbsolutePosition['left-top']!.dy,
-        0);
+    Matrix4 translation = Matrix4.identity();
+    if (matrixInProgress != Matrix4.identity()) {
+      // progress中に表示が崩れる
+      translation *= Matrix4.inverted(getCompleteMatrixes());
+      translation *= Matrix4.inverted(matrixInProgress);
+    } else {
+      translation *= Matrix4.inverted(getCompleteMatrixes());
+    }
     final Matrix4 scale = Matrix4.diagonal3(Vector3.all(1.0 / scaleFactor));
     return scale * translation;
   }
@@ -259,20 +265,16 @@ class ArtBoardState extends State<ArtBoard> {
                       final scale = details.scale;
                       final rotation = details.rotation;
                       posOffset += posDelta;
-                      artBoardInfo.matrixInProgress = Matrix4.translation(
-                          artBoardInfo.offsetToVector3(posOffset));
-                      // artBoardInfo.matrixInProgress =
-                      //     artBoardInfo.matrixScaleAroundPivot(pos, scale);
+                      // artBoardInfo.matrixInProgress = Matrix4.translation(
+                      //     artBoardInfo.offsetToVector3(posOffset));
+                      artBoardInfo.matrixInProgress =
+                          artBoardInfo.matrixScaleAroundPivot(pos, scale);
 
                       repaint.notifyListeners();
                     }
                   }
                 },
                 onScaleEnd: (details) {
-                  // artBoardInfo.completedMatrixes.add(Matrix4.translation(
-                  //     artBoardInfo
-                  //         .offsetToVector3(artBoardInfo.deltaPosition)));
-                  // artBoardInfo.deltaPosition = Offset.zero;
                   artBoardInfo.completedMatrixesAdd();
                   posOffset = Offset.zero;
                   repaint.notifyListeners();
