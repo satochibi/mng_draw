@@ -26,7 +26,7 @@ class ArtBoardInfo {
   // デフォルトからの位置の変位(変化時)
   Matrix4 matrixInProgress = Matrix4.identity();
   // 完了した行列
-  List<Matrix4> completedMatrixes = [];
+  List<Matrix4> completedMatrixes = [Matrix4.identity()];
 
   ArtBoardInfo(this.aspectRatio, this.isClip);
 
@@ -74,20 +74,27 @@ class ArtBoardInfo {
         defaultAbsolutePosition['left-top']! +
             Offset(defalutSize.width, defalutSize.height);
 
-    // 行列による変換
+    // 行列が確定したものたちで変換
     defaultAbsolutePosition = defaultAbsolutePosition.map((key, value) =>
         MapEntry(
-            key, vector3ToOffset(matrixInProgress * offsetToVector3(value))));
+            key,
+            vector3ToOffset(getCompleteMatrixes() *
+                matrixInProgress *
+                offsetToVector3(value))));
+  }
 
-    // 行列が確定したものたちで変換
-    if (completedMatrixes.isNotEmpty) {
-      final matrix =
-          completedMatrixes.reduce((total, element) => total * element);
-      completedMatrixes.clear();
-      completedMatrixes.add(matrix);
-      defaultAbsolutePosition = defaultAbsolutePosition.map((key, value) =>
-          MapEntry(key, vector3ToOffset(matrix * offsetToVector3(value))));
-    }
+  getCompleteMatrixes() {
+    final matrix =
+        completedMatrixes.reduce((total, element) => total * element);
+    return matrix;
+  }
+
+  completedMatrixesAdd() {
+    completedMatrixes.add(matrixInProgress);
+    final matrix = getCompleteMatrixes();
+    completedMatrixes.clear();
+    completedMatrixes.add(matrix);
+    matrixInProgress = Matrix4.identity();
   }
 
   Matrix4 matrixRotationAroundPivot(Offset pivot, double radians) {
@@ -185,6 +192,9 @@ class ArtBoardState extends State<ArtBoard> {
   void fullscreen() {
     setState(() {
       artBoardInfo.completedMatrixes.clear();
+      artBoardInfo.completedMatrixes.add(Matrix4.identity());
+      artBoardInfo.matrixInProgress = Matrix4.identity();
+      posOffset = Offset.zero;
     });
   }
 
@@ -251,6 +261,8 @@ class ArtBoardState extends State<ArtBoard> {
                       posOffset += posDelta;
                       artBoardInfo.matrixInProgress = Matrix4.translation(
                           artBoardInfo.offsetToVector3(posOffset));
+                      // artBoardInfo.matrixInProgress =
+                      //     artBoardInfo.matrixScaleAroundPivot(pos, scale);
 
                       repaint.notifyListeners();
                     }
@@ -261,6 +273,8 @@ class ArtBoardState extends State<ArtBoard> {
                   //     artBoardInfo
                   //         .offsetToVector3(artBoardInfo.deltaPosition)));
                   // artBoardInfo.deltaPosition = Offset.zero;
+                  artBoardInfo.completedMatrixesAdd();
+                  posOffset = Offset.zero;
                   repaint.notifyListeners();
                 },
                 child: ClipRect(
